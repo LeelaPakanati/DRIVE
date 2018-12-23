@@ -27,7 +27,8 @@
 `define RS_ENT_MUL 3
 `define RS_ENT_DIV 3
 `define RS_ENT_LDST 4
-`define	RS_ENT_FPGA 5
+`define	RS_ENT_C1 5
+`define	RS_ENT_C2 6
 
 //RS
 `define ALU_ENT_SEL 3
@@ -40,8 +41,8 @@
 //`define LDST_ENT_NUM 8
 `define MUL_ENT_SEL 1
 `define MUL_ENT_NUM 2
-`define FPGA_ENT_SEL 2
-`define FPGA_ENT_NUM 4
+`define FPGA_ENT_SEL 1
+`define FPGA_ENT_NUM 2
 
 //STOREBUFFER
 `define STBUF_ENT_SEL 5

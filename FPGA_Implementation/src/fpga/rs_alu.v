@@ -21,6 +21,8 @@ module rs_alu_ent
    input wire [`ALU_OP_WIDTH-1:0]    walu_op,
    input wire [`SPECTAG_LEN-1:0]     wspectag,
    input wire 			     we,
+
+
    output wire [`DATA_LEN-1:0] 	     ex_src1,
    output wire [`DATA_LEN-1:0] 	     ex_src2,
    output wire 			     ready,
@@ -32,6 +34,7 @@ module rs_alu_ent
    output reg [`SRC_B_SEL_WIDTH-1:0] src_b,
    output reg [`ALU_OP_WIDTH-1:0]    alu_op,
    output reg [`SPECTAG_LEN-1:0]     spectag,
+   
    //EXRSLT
    input wire [`DATA_LEN-1:0] 	     exrslt1,
    input wire [`RRF_SEL-1:0] 	     exdst1,
@@ -47,8 +50,15 @@ module rs_alu_ent
    input wire 			     kill_spec4,
    input wire [`DATA_LEN-1:0] 	     exrslt5,
    input wire [`RRF_SEL-1:0] 	     exdst5,
-   input wire 			     kill_spec5
-   );
+   input wire 			     kill_spec5,
+
+   input wire [`DATA_LEN-1:0] 	     exrslt6,
+   input wire [`RRF_SEL-1:0] 	     exdst6,
+   input wire 			     kill_spec6,
+   input wire [`DATA_LEN-1:0] 	     exrslt7,
+   input wire [`RRF_SEL-1:0] 	     exdst7,
+   input wire 			     kill_spec7
+      );
 
    reg [`DATA_LEN-1:0] 		     src1;
    reg [`DATA_LEN-1:0] 		     src2;
@@ -121,6 +131,14 @@ module rs_alu_ent
 		       .exrslt5(exrslt5),
 		       .exdst5(exdst5),
 		       .kill_spec5(kill_spec5),
+
+		       .exrslt6(exrslt6),
+		       .exdst6(exdst6),
+		       .kill_spec6(kill_spec6),
+		       .exrslt7(exrslt7),
+		       .exdst7(exdst7),
+		       .kill_spec7(kill_spec7),
+
 		       .src(nextsrc1),
 		       .resolved(nextvalid1)
 		       );
@@ -143,6 +161,14 @@ module rs_alu_ent
 		       .exrslt5(exrslt5),
 		       .exdst5(exdst5),
 		       .kill_spec5(kill_spec5),
+
+		       .exrslt6(exrslt6),
+		       .exdst6(exdst6),
+		       .kill_spec6(kill_spec6),
+		       .exrslt7(exrslt7),
+		       .exdst7(exdst7),
+		       .kill_spec7(kill_spec7),
+
 		       .src(nextsrc2),
 		       .resolved(nextvalid2)
 		       );
@@ -227,7 +253,14 @@ module rs_alu
    input wire 				       kill_spec4,
    input wire [`DATA_LEN-1:0] 		       exrslt5,
    input wire [`RRF_SEL-1:0] 		       exdst5,
-   input wire 				       kill_spec5
+   input wire 				       kill_spec5,
+
+   input wire [`DATA_LEN-1:0] 		       exrslt6,
+   input wire [`RRF_SEL-1:0] 		       exdst6,
+   input wire 				       kill_spec6,
+   input wire [`DATA_LEN-1:0] 		       exrslt7,
+   input wire [`RRF_SEL-1:0] 		       exdst7,
+   input wire 				       kill_spec7
    );
    
    //_0
@@ -482,7 +515,14 @@ module rs_alu
 		   .kill_spec4(kill_spec4),
 		   .exrslt5(exrslt5),
 		   .exdst5(exdst5),
-		   .kill_spec5(kill_spec5)
+		   .kill_spec5(kill_spec5),
+
+		   .exrslt6(exrslt6),
+		   .exdst6(exdst6),
+		   .kill_spec6(kill_spec6),
+		   .exrslt7(exrslt7),
+		   .exdst7(exdst7),
+		   .kill_spec7(kill_spec7)
 		   );
 
    rs_alu_ent ent1(
@@ -527,7 +567,14 @@ module rs_alu
 		   .kill_spec4(kill_spec4),
 		   .exrslt5(exrslt5),
 		   .exdst5(exdst5),
-		   .kill_spec5(kill_spec5)
+		   .kill_spec5(kill_spec5),
+
+		   .exrslt6(exrslt6),
+		   .exdst6(exdst6),
+		   .kill_spec6(kill_spec6),
+		   .exrslt7(exrslt7),
+		   .exdst7(exdst7),
+		   .kill_spec7(kill_spec7)
 		   );
 
    rs_alu_ent ent2(
@@ -572,7 +619,14 @@ module rs_alu
 		   .kill_spec4(kill_spec4),
 		   .exrslt5(exrslt5),
 		   .exdst5(exdst5),
-		   .kill_spec5(kill_spec5)
+		   .kill_spec5(kill_spec5),
+
+		   .exrslt6(exrslt6),
+		   .exdst6(exdst6),
+		   .kill_spec6(kill_spec6),
+		   .exrslt7(exrslt7),
+		   .exdst7(exdst7),
+		   .kill_spec7(kill_spec7)
 		   );
 
    rs_alu_ent ent3(
@@ -617,7 +671,14 @@ module rs_alu
 		   .kill_spec4(kill_spec4),
 		   .exrslt5(exrslt5),
 		   .exdst5(exdst5),
-		   .kill_spec5(kill_spec5)
+		   .kill_spec5(kill_spec5),
+
+		   .exrslt6(exrslt6),
+		   .exdst6(exdst6),
+		   .kill_spec6(kill_spec6),
+		   .exrslt7(exrslt7),
+		   .exdst7(exdst7),
+		   .kill_spec7(kill_spec7)
 		   );
 
    rs_alu_ent ent4(
@@ -662,7 +723,14 @@ module rs_alu
 		   .kill_spec4(kill_spec4),
 		   .exrslt5(exrslt5),
 		   .exdst5(exdst5),
-		   .kill_spec5(kill_spec5)
+		   .kill_spec5(kill_spec5),
+
+		   .exrslt6(exrslt6),
+		   .exdst6(exdst6),
+		   .kill_spec6(kill_spec6),
+		   .exrslt7(exrslt7),
+		   .exdst7(exdst7),
+		   .kill_spec7(kill_spec7)
 		   );
 
    rs_alu_ent ent5(
@@ -707,7 +775,14 @@ module rs_alu
 		   .kill_spec4(kill_spec4),
 		   .exrslt5(exrslt5),
 		   .exdst5(exdst5),
-		   .kill_spec5(kill_spec5)
+		   .kill_spec5(kill_spec5),
+
+		   .exrslt6(exrslt6),
+		   .exdst6(exdst6),
+		   .kill_spec6(kill_spec6),
+		   .exrslt7(exrslt7),
+		   .exdst7(exdst7),
+		   .kill_spec7(kill_spec7)
 		   );
 
    rs_alu_ent ent6(
@@ -752,7 +827,14 @@ module rs_alu
 		   .kill_spec4(kill_spec4),
 		   .exrslt5(exrslt5),
 		   .exdst5(exdst5),
-		   .kill_spec5(kill_spec5)
+		   .kill_spec5(kill_spec5),
+
+		   .exrslt6(exrslt6),
+		   .exdst6(exdst6),
+		   .kill_spec6(kill_spec6),
+		   .exrslt7(exrslt7),
+		   .exdst7(exdst7),
+		   .kill_spec7(kill_spec7)
 		   );
 
    rs_alu_ent ent7(
@@ -797,7 +879,14 @@ module rs_alu
 		   .kill_spec4(kill_spec4),
 		   .exrslt5(exrslt5),
 		   .exdst5(exdst5),
-		   .kill_spec5(kill_spec5)
+		   .kill_spec5(kill_spec5),
+
+		   .exrslt6(exrslt6),
+		   .exdst6(exdst6),
+		   .kill_spec6(kill_spec6),
+		   .exrslt7(exrslt7),
+		   .exdst7(exdst7),
+		   .kill_spec7(kill_spec7)
 		   );
    
    assign ex_src1 = (issueaddr == 0) ? ex_src1_0 :

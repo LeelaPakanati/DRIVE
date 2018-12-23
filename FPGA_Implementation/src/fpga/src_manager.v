@@ -19,6 +19,14 @@ module src_manager
    input wire [`DATA_LEN-1:0]  exrslt5,
    input wire [`RRF_SEL-1:0]   exdst5,
    input wire 		       kill_spec5,
+
+   input wire [`DATA_LEN-1:0]  exrslt6,
+   input wire [`RRF_SEL-1:0]   exdst6,
+   input wire            kill_spec6,   
+   input wire [`DATA_LEN-1:0]  exrslt7,
+   input wire [`RRF_SEL-1:0]   exdst7,
+   input wire            kill_spec7,
+
    output wire [`DATA_LEN-1:0] src,
    output wire 		       resolved
    );
@@ -28,14 +36,18 @@ module src_manager
 		~kill_spec2 & (exdst2 == opr) ? exrslt2 :
 		~kill_spec3 & (exdst3 == opr) ? exrslt3 :
 		~kill_spec4 & (exdst4 == opr) ? exrslt4 :
-		~kill_spec5 & (exdst5 == opr) ? exrslt5 : opr;
+		~kill_spec5 & (exdst5 == opr) ? exrslt5 :
+      ~kill_spec6 & (exdst6 == opr) ? exrslt6 :
+      ~kill_spec7 & (exdst7 == opr) ? exrslt7 : opr;
 
    assign resolved = opr_rdy |
 		     (~kill_spec1 & (exdst1 == opr)) |
 		     (~kill_spec2 & (exdst2 == opr)) |
 		     (~kill_spec3 & (exdst3 == opr)) |
 		     (~kill_spec4 & (exdst4 == opr)) |
-		     (~kill_spec5 & (exdst5 == opr));
+		     (~kill_spec5 & (exdst5 == opr)) |
+           (~kill_spec6 & (exdst6 == opr)) |
+           (~kill_spec7 & (exdst7 == opr));
    
 endmodule // src_manager
 

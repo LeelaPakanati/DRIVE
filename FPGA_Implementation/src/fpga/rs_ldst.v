@@ -39,7 +39,14 @@ module rs_ldst_ent
    input wire 			 kill_spec4,
    input wire [`DATA_LEN-1:0] 	 exrslt5,
    input wire [`RRF_SEL-1:0] 	 exdst5,
-   input wire 			 kill_spec5
+   input wire 			 kill_spec5,
+
+   input wire [`DATA_LEN-1:0] 	     exrslt6,
+   input wire [`RRF_SEL-1:0] 	     exdst6,
+   input wire 			     kill_spec6,
+   input wire [`DATA_LEN-1:0] 	     exrslt7,
+   input wire [`RRF_SEL-1:0] 	     exdst7,
+   input wire 			     kill_spec7
    );
 
    reg [`DATA_LEN-1:0] 		 src1;
@@ -107,6 +114,14 @@ module rs_ldst_ent
 		       .exrslt5(exrslt5),
 		       .exdst5(exdst5),
 		       .kill_spec5(kill_spec5),
+
+		       .exrslt6(exrslt6),
+		       .exdst6(exdst6),
+		       .kill_spec6(kill_spec6),
+		       .exrslt7(exrslt7),
+		       .exdst7(exdst7),
+		       .kill_spec7(kill_spec7),
+
 		       .src(nextsrc1),
 		       .resolved(nextvalid1)
 		       );
@@ -129,6 +144,14 @@ module rs_ldst_ent
 		       .exrslt5(exrslt5),
 		       .exdst5(exdst5),
 		       .kill_spec5(kill_spec5),
+
+		       .exrslt6(exrslt6),
+		       .exdst6(exdst6),
+		       .kill_spec6(kill_spec6),
+		       .exrslt7(exrslt7),
+		       .exdst7(exdst7),
+		       .kill_spec7(kill_spec7),
+
 		       .src(nextsrc2),
 		       .resolved(nextvalid2)
 		       );
@@ -203,7 +226,14 @@ module rs_ldst
    input wire 			   kill_spec4,
    input wire [`DATA_LEN-1:0] 	   exrslt5,
    input wire [`RRF_SEL-1:0] 	   exdst5,
-   input wire 			   kill_spec5
+   input wire 			   kill_spec5,
+
+   input wire [`DATA_LEN-1:0] 		       exrslt6,
+   input wire [`RRF_SEL-1:0] 		       exdst6,
+   input wire 				       kill_spec6,
+   input wire [`DATA_LEN-1:0] 		       exrslt7,
+   input wire [`RRF_SEL-1:0] 		       exdst7,
+   input wire 				       kill_spec7
    );
 
    //_0
@@ -343,7 +373,14 @@ module rs_ldst
 		    .kill_spec4(kill_spec4),
 		    .exrslt5(exrslt5),
 		    .exdst5(exdst5),
-		    .kill_spec5(kill_spec5)
+		    .kill_spec5(kill_spec5),
+
+		   .exrslt6(exrslt6),
+		   .exdst6(exdst6),
+		   .kill_spec6(kill_spec6),
+		   .exrslt7(exrslt7),
+		   .exdst7(exdst7),
+		   .kill_spec7(kill_spec7)
 		    );
 
    rs_ldst_ent ent1(
@@ -382,7 +419,14 @@ module rs_ldst
 		    .kill_spec4(kill_spec4),
 		    .exrslt5(exrslt5),
 		    .exdst5(exdst5),
-		    .kill_spec5(kill_spec5)
+		    .kill_spec5(kill_spec5),
+
+		   .exrslt6(exrslt6),
+		   .exdst6(exdst6),
+		   .kill_spec6(kill_spec6),
+		   .exrslt7(exrslt7),
+		   .exdst7(exdst7),
+		   .kill_spec7(kill_spec7)
 		    );
 
    rs_ldst_ent ent2(
@@ -421,7 +465,14 @@ module rs_ldst
 		    .kill_spec4(kill_spec4),
 		    .exrslt5(exrslt5),
 		    .exdst5(exdst5),
-		    .kill_spec5(kill_spec5)
+		    .kill_spec5(kill_spec5),
+
+		   .exrslt6(exrslt6),
+		   .exdst6(exdst6),
+		   .kill_spec6(kill_spec6),
+		   .exrslt7(exrslt7),
+		   .exdst7(exdst7),
+		   .kill_spec7(kill_spec7)
 		    );
 
    rs_ldst_ent ent3(
@@ -460,7 +511,14 @@ module rs_ldst
 		    .kill_spec4(kill_spec4),
 		    .exrslt5(exrslt5),
 		    .exdst5(exdst5),
-		    .kill_spec5(kill_spec5)
+		    .kill_spec5(kill_spec5),
+
+		   .exrslt6(exrslt6),
+		   .exdst6(exdst6),
+		   .kill_spec6(kill_spec6),
+		   .exrslt7(exrslt7),
+		   .exdst7(exdst7),
+		   .kill_spec7(kill_spec7)
 		    );
 
    

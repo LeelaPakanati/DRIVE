@@ -5,6 +5,8 @@
 `define DOUBLE_XPR_LEN 64
 `define LOG2_XPR_LEN    5
 `define SHAMT_WIDTH     5
+`define FUNCT7_WIDTH	7
+`define FUNCT3_WIDTH	3
 
 `define RV_NOP `INST_WIDTH'b0010011
 

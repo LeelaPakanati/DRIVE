@@ -3,17 +3,12 @@
 
 module top
   (
-   input 	    CLK_P,
-   input 	    CLK_N,
-   input 	    RST_X_IN,
+   input 	    clk,
+   input 	    reset_x,
    output 	    TXD,
    input 	    RXD,
    output reg [7:0] LED
    );
-
-   //Active Low SW
-   wire 	    clk;
-   wire 	    reset_x;
 
 
    wire [`ADDR_LEN-1:0] pc;
@@ -68,15 +63,6 @@ module top
       end
    end
    
-   GEN_MMCM_DS genmmcmds
-     (
-      .CLK_P(CLK_P), 
-      .CLK_N(CLK_N), 
-      .RST_X_I(~RST_X_IN), 
-      .CLK_O(clk), 
-      .RST_X_O(reset_x)
-      );
-
    pipeline pipe
      (
       .clk(clk),

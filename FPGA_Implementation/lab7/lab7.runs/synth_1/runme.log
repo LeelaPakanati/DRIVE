@@ -1,0 +1,451 @@
+
+*** Running vivado
+    with args -log uartTestece530winter2017.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source uartTestece530winter2017.tcl
+
+
+****** Vivado v2018.2 (64-bit)
+  **** SW Build 2258646 on Thu Jun 14 20:03:12 MDT 2018
+  **** IP Build 2256618 on Thu Jun 14 22:10:49 MDT 2018
+    ** Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
+
+source uartTestece530winter2017.tcl -notrace
+Command: synth_design -top uartTestece530winter2017 -part xc7z010clg400-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7z010'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7z010'
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 12400 
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:03 ; elapsed = 00:00:03 . Memory (MB): peak = 411.609 ; gain = 97.086
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'uartTestece530winter2017' [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/uartTestece530winter2017.v:8]
+	Parameter BAUDRATE bound to: 20'b00001001011000000000 
+	Parameter FREQUENCY bound to: 30'b000111011100110101100101000000 
+INFO: [Synth 8-6157] synthesizing module 'DebouncerWithoutLatch' [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/DebouncerWithoutLatch.v:9]
+	Parameter State0 bound to: 0 - type: integer 
+	Parameter State1 bound to: 1 - type: integer 
+	Parameter State2 bound to: 2 - type: integer 
+	Parameter State3 bound to: 3 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'DelayLoop' [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/DelayLoop.v:7]
+	Parameter Divider bound to: 10000 - type: integer 
+	Parameter NumberOfBits bound to: 27 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'DelayLoop' (1#1) [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/DelayLoop.v:7]
+INFO: [Synth 8-6155] done synthesizing module 'DebouncerWithoutLatch' (2#1) [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/DebouncerWithoutLatch.v:9]
+INFO: [Synth 8-6157] synthesizing module 'ClockedOneShot' [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/ClockedOneShot.v:6]
+	Parameter State0 bound to: 0 - type: integer 
+	Parameter State1 bound to: 1 - type: integer 
+	Parameter State2 bound to: 2 - type: integer 
+	Parameter State3 bound to: 3 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'ClockedOneShot' (3#1) [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/ClockedOneShot.v:6]
+INFO: [Synth 8-6157] synthesizing module 'BaudRateGenerator' [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/BaudRateGenerator.v:9]
+INFO: [Synth 8-6155] done synthesizing module 'BaudRateGenerator' (4#1) [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/BaudRateGenerator.v:9]
+INFO: [Synth 8-6157] synthesizing module 'uart_tx' [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/uart_tx.v:76]
+INFO: [Synth 8-6157] synthesizing module 'kcuart_tx' [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/kcuart_tx.v:91]
+INFO: [Synth 8-6157] synthesizing module 'MUXCY' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:26616]
+INFO: [Synth 8-6155] done synthesizing module 'MUXCY' (5#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:26616]
+INFO: [Synth 8-6157] synthesizing module 'XORCY' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:52723]
+INFO: [Synth 8-6155] done synthesizing module 'XORCY' (6#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:52723]
+INFO: [Synth 8-6157] synthesizing module 'FDRE' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:3966]
+	Parameter INIT bound to: 1'b0 
+	Parameter IS_C_INVERTED bound to: 1'b0 
+	Parameter IS_D_INVERTED bound to: 1'b0 
+	Parameter IS_R_INVERTED bound to: 1'b0 
+INFO: [Synth 8-6155] done synthesizing module 'FDRE' (7#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:3966]
+INFO: [Synth 8-6157] synthesizing module 'LUT2' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25495]
+	Parameter INIT bound to: 4'b1000 
+INFO: [Synth 8-6155] done synthesizing module 'LUT2' (8#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25495]
+INFO: [Synth 8-6157] synthesizing module 'MULT_AND' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:26605]
+INFO: [Synth 8-6155] done synthesizing module 'MULT_AND' (9#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:26605]
+INFO: [Synth 8-6157] synthesizing module 'LUT4' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+	Parameter INIT bound to: 16'b1110010011111111 
+INFO: [Synth 8-6155] done synthesizing module 'LUT4' (10#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+INFO: [Synth 8-6157] synthesizing module 'MUXF5' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:26653]
+INFO: [Synth 8-6155] done synthesizing module 'MUXF5' (11#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:26653]
+INFO: [Synth 8-6157] synthesizing module 'MUXF6' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:26690]
+INFO: [Synth 8-6155] done synthesizing module 'MUXF6' (12#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:26690]
+INFO: [Synth 8-6157] synthesizing module 'FDRS' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:4000]
+	Parameter INIT bound to: 1'b0 
+	Parameter IS_C_INVERTED bound to: 1'b0 
+	Parameter IS_D_INVERTED bound to: 1'b0 
+	Parameter IS_R_INVERTED bound to: 1'b0 
+	Parameter IS_S_INVERTED bound to: 1'b0 
+INFO: [Synth 8-6155] done synthesizing module 'FDRS' (13#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:4000]
+INFO: [Synth 8-6157] synthesizing module 'LUT3' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25533]
+	Parameter INIT bound to: 8'b00010000 
+INFO: [Synth 8-6155] done synthesizing module 'LUT3' (14#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25533]
+INFO: [Synth 8-6157] synthesizing module 'LUT4__parameterized0' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+	Parameter INIT bound to: 16'b0000000110010000 
+INFO: [Synth 8-6155] done synthesizing module 'LUT4__parameterized0' (14#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+INFO: [Synth 8-6157] synthesizing module 'FDE' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:3867]
+	Parameter INIT bound to: 1'b0 
+INFO: [Synth 8-6155] done synthesizing module 'FDE' (15#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:3867]
+INFO: [Synth 8-6157] synthesizing module 'LUT4__parameterized1' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+	Parameter INIT bound to: 16'b0001010101000000 
+INFO: [Synth 8-6155] done synthesizing module 'LUT4__parameterized1' (15#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+INFO: [Synth 8-6157] synthesizing module 'LUT3__parameterized0' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25533]
+	Parameter INIT bound to: 8'b10010100 
+INFO: [Synth 8-6155] done synthesizing module 'LUT3__parameterized0' (15#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25533]
+INFO: [Synth 8-6157] synthesizing module 'SRL16E' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:50711]
+	Parameter INIT bound to: 16'b0000000000000000 
+	Parameter IS_CLK_INVERTED bound to: 1'b0 
+INFO: [Synth 8-6155] done synthesizing module 'SRL16E' (16#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:50711]
+INFO: [Synth 8-6157] synthesizing module 'LUT4__parameterized2' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+	Parameter INIT bound to: 16'b0000000110000000 
+INFO: [Synth 8-6155] done synthesizing module 'LUT4__parameterized2' (16#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+INFO: [Synth 8-6157] synthesizing module 'FD' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:3725]
+	Parameter INIT bound to: 1'b0 
+INFO: [Synth 8-6155] done synthesizing module 'FD' (17#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:3725]
+INFO: [Synth 8-6155] done synthesizing module 'kcuart_tx' (18#1) [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/kcuart_tx.v:91]
+INFO: [Synth 8-6157] synthesizing module 'bbfifo_16x8' [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/bbfifo_16x8.v:88]
+INFO: [Synth 8-6157] synthesizing module 'LUT4__parameterized3' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+	Parameter INIT bound to: 16'b0110011000000110 
+INFO: [Synth 8-6155] done synthesizing module 'LUT4__parameterized3' (18#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+INFO: [Synth 8-6157] synthesizing module 'LUT4__parameterized4' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+	Parameter INIT bound to: 16'b0000000000000001 
+INFO: [Synth 8-6155] done synthesizing module 'LUT4__parameterized4' (18#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+INFO: [Synth 8-6157] synthesizing module 'LUT4__parameterized5' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+	Parameter INIT bound to: 16'b1000000000000000 
+INFO: [Synth 8-6155] done synthesizing module 'LUT4__parameterized5' (18#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+INFO: [Synth 8-6157] synthesizing module 'LUT4__parameterized6' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+	Parameter INIT bound to: 16'b1011111110100000 
+INFO: [Synth 8-6155] done synthesizing module 'LUT4__parameterized6' (18#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+INFO: [Synth 8-6157] synthesizing module 'FDR' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:3953]
+	Parameter INIT bound to: 1'b0 
+INFO: [Synth 8-6155] done synthesizing module 'FDR' (19#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:3953]
+INFO: [Synth 8-6157] synthesizing module 'LUT3__parameterized1' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25533]
+	Parameter INIT bound to: 8'b11000100 
+INFO: [Synth 8-6155] done synthesizing module 'LUT3__parameterized1' (19#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25533]
+INFO: [Synth 8-6155] done synthesizing module 'bbfifo_16x8' (20#1) [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/bbfifo_16x8.v:88]
+INFO: [Synth 8-6155] done synthesizing module 'uart_tx' (21#1) [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/uart_tx.v:76]
+INFO: [Synth 8-6157] synthesizing module 'uart_rx' [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/uart_rx.v:76]
+INFO: [Synth 8-6157] synthesizing module 'kcuart_rx' [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/kcuart_rx.v:88]
+INFO: [Synth 8-6157] synthesizing module 'LUT4__parameterized7' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+	Parameter INIT bound to: 16'b0000000001000000 
+INFO: [Synth 8-6155] done synthesizing module 'LUT4__parameterized7' (21#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25575]
+INFO: [Synth 8-6157] synthesizing module 'LUT3__parameterized2' [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25533]
+	Parameter INIT bound to: 8'b01010100 
+INFO: [Synth 8-6155] done synthesizing module 'LUT3__parameterized2' (21#1) [C:/Xilinx/Vivado/2018.2/scripts/rt/data/unisim_comp.v:25533]
+INFO: [Synth 8-6155] done synthesizing module 'kcuart_rx' (22#1) [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/kcuart_rx.v:88]
+INFO: [Synth 8-6155] done synthesizing module 'uart_rx' (23#1) [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/uart_rx.v:76]
+INFO: [Synth 8-4471] merging register 'write_to_uart_reg' into 'read_from_uart_reg' [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/uartTestece530winter2017.v:22]
+WARNING: [Synth 8-6014] Unused sequential element write_to_uart_reg was removed.  [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/uartTestece530winter2017.v:22]
+INFO: [Synth 8-6155] done synthesizing module 'uartTestece530winter2017' (24#1) [C:/Users/pakanalk/Downloads/Lab 7 Source Files-20181219/uartTestece530winter2017.v:8]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 467.266 ; gain = 152.742
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 467.266 ; gain = 152.742
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 467.266 ; gain = 152.742
+---------------------------------------------------------------------------------
+INFO: [Netlist 29-17] Analyzing 59 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Device 21-403] Loading part xc7z010clg400-1
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [C:/Users/pakanalk/OneDrive - Rose-Hulman Institute of Technology/Class Files/RISCy Expansion/DRIVE/FPGA_Implementation/lab7/lab7.srcs/constrs_1/new/constraints.xdc]
+Finished Parsing XDC File [C:/Users/pakanalk/OneDrive - Rose-Hulman Institute of Technology/Class Files/RISCy Expansion/DRIVE/FPGA_Implementation/lab7/lab7.srcs/constrs_1/new/constraints.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [C:/Users/pakanalk/OneDrive - Rose-Hulman Institute of Technology/Class Files/RISCy Expansion/DRIVE/FPGA_Implementation/lab7/lab7.srcs/constrs_1/new/constraints.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/uartTestece530winter2017_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/uartTestece530winter2017_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 39 instances were transformed.
+  FD => FDRE: 4 instances
+  FDE => FDRE: 26 instances
+  FDR => FDRE: 2 instances
+  FDRS => FDRS (FDRE, LUT2, VCC): 1 instances
+  MULT_AND => LUT2: 3 instances
+  MUXF5 => LUT3: 2 instances
+  MUXF6 => LUT3: 1 instances
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.008 . Memory (MB): peak = 797.051 ; gain = 0.000
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:15 ; elapsed = 00:00:28 . Memory (MB): peak = 797.051 ; gain = 482.527
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7z010clg400-1
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:15 ; elapsed = 00:00:28 . Memory (MB): peak = 797.051 ; gain = 482.527
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:15 ; elapsed = 00:00:28 . Memory (MB): peak = 797.051 ; gain = 482.527
+---------------------------------------------------------------------------------
+INFO: [Synth 8-5545] ROM "Timeout" won't be mapped to RAM because address size (27) is larger than maximum supported(25)
+INFO: [Synth 8-5544] ROM "OneShot" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:15 ; elapsed = 00:00:29 . Memory (MB): peak = 797.051 ; gain = 482.527
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Registers : 
+	                2 Bit    Registers := 2     
+	                1 Bit    Registers := 4     
++---Muxes : 
+	   5 Input      2 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 6     
+	   4 Input      1 Bit        Muxes := 2     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Hierarchical Component Statistics 
+---------------------------------------------------------------------------------
+Hierarchical RTL Component report 
+Module uartTestece530winter2017 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 1     
+Module DelayLoop 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 2     
+Module DebouncerWithoutLatch 
+Detailed RTL Component Info : 
++---Registers : 
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   5 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 1     
+	   4 Input      1 Bit        Muxes := 2     
+Module ClockedOneShot 
+Detailed RTL Component Info : 
++---Registers : 
+	                2 Bit    Registers := 1     
++---Muxes : 
+	   4 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 2     
+Module BaudRateGenerator 
+Detailed RTL Component Info : 
++---Registers : 
+	                1 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      1 Bit        Muxes := 1     
+---------------------------------------------------------------------------------
+Finished RTL Hierarchical Component Statistics
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 80 (col length:40)
+BRAMs: 120 (col length: RAMB18 40 RAMB36 20)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+Warning: Parallel synthesis criteria is not met 
+INFO: [Synth 8-5545] ROM "DebounceUnit/Timer/Timeout" won't be mapped to RAM because address size (27) is larger than maximum supported(25)
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:16 ; elapsed = 00:00:30 . Memory (MB): peak = 797.051 ; gain = 482.527
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:27 ; elapsed = 00:00:42 . Memory (MB): peak = 798.102 ; gain = 483.578
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:27 ; elapsed = 00:00:42 . Memory (MB): peak = 798.176 ; gain = 483.652
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:27 ; elapsed = 00:00:42 . Memory (MB): peak = 808.184 ; gain = 493.660
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:28 ; elapsed = 00:00:43 . Memory (MB): peak = 808.184 ; gain = 493.660
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:28 ; elapsed = 00:00:43 . Memory (MB): peak = 808.184 ; gain = 493.660
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:28 ; elapsed = 00:00:43 . Memory (MB): peak = 808.184 ; gain = 493.660
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:28 ; elapsed = 00:00:43 . Memory (MB): peak = 808.184 ; gain = 493.660
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:28 ; elapsed = 00:00:43 . Memory (MB): peak = 808.184 ; gain = 493.660
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:28 ; elapsed = 00:00:43 . Memory (MB): peak = 808.184 ; gain = 493.660
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+---------+------+
+|      |Cell     |Count |
++------+---------+------+
+|1     |BUFG     |     1|
+|2     |CARRY4   |    13|
+|3     |LUT1     |     3|
+|4     |LUT2     |    10|
+|5     |LUT3     |    13|
+|6     |LUT4     |    29|
+|7     |LUT5     |     4|
+|8     |LUT6     |     2|
+|9     |MULT_AND |     3|
+|10    |MUXCY    |     9|
+|11    |MUXF5    |     2|
+|12    |MUXF6    |     1|
+|13    |SRL16E   |    36|
+|14    |XORCY    |    11|
+|15    |FD       |     4|
+|16    |FDE      |    26|
+|17    |FDR      |     2|
+|18    |FDRE     |    62|
+|19    |FDSE     |     1|
+|20    |IBUF     |     4|
+|21    |OBUF     |     5|
++------+---------+------+
+
+Report Instance Areas: 
++------+---------------+----------------------+------+
+|      |Instance       |Module                |Cells |
++------+---------------+----------------------+------+
+|1     |top            |                      |   241|
+|2     |  BaudRateUnit |BaudRateGenerator     |    31|
+|3     |  DebounceUnit |DebouncerWithoutLatch |    55|
+|4     |    Timer      |DelayLoop             |    49|
+|5     |  OneShotUnit  |ClockedOneShot        |     5|
+|6     |  TransmitUnit |uart_tx               |    65|
+|7     |    buf_0      |bbfifo_16x8_0         |    28|
+|8     |    kcuart     |kcuart_tx             |    37|
+|9     |  receive      |uart_rx               |    74|
+|10    |    buf_0      |bbfifo_16x8           |    28|
+|11    |    kcuart     |kcuart_rx             |    46|
++------+---------------+----------------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:28 ; elapsed = 00:00:43 . Memory (MB): peak = 808.184 ; gain = 493.660
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 0 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:16 ; elapsed = 00:00:22 . Memory (MB): peak = 808.184 ; gain = 163.875
+Synthesis Optimization Complete : Time (s): cpu = 00:00:28 ; elapsed = 00:00:43 . Memory (MB): peak = 808.184 ; gain = 493.660
+INFO: [Project 1-571] Translating synthesized netlist
+INFO: [Netlist 29-17] Analyzing 75 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 41 instances were transformed.
+  (MUXCY,XORCY) => CARRY4: 3 instances
+  FD => FDRE: 4 instances
+  FDE => FDRE: 26 instances
+  FDR => FDRE: 2 instances
+  MULT_AND => LUT2: 3 instances
+  MUXF5 => LUT3: 2 instances
+  MUXF6 => LUT3: 1 instances
+
+INFO: [Common 17-83] Releasing license: Synthesis
+88 Infos, 1 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:30 ; elapsed = 00:00:46 . Memory (MB): peak = 822.574 ; gain = 520.863
+WARNING: [Constraints 18-5210] No constraint will be written out.
+INFO: [Common 17-1381] The checkpoint 'C:/Users/pakanalk/OneDrive - Rose-Hulman Institute of Technology/Class Files/RISCy Expansion/DRIVE/FPGA_Implementation/lab7/lab7.runs/synth_1/uartTestece530winter2017.dcp' has been generated.
+INFO: [runtcl-4] Executing : report_utilization -file uartTestece530winter2017_utilization_synth.rpt -pb uartTestece530winter2017_utilization_synth.pb
+report_utilization: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.029 . Memory (MB): peak = 822.574 ; gain = 0.000
+INFO: [Common 17-206] Exiting Vivado at Wed Dec 19 21:55:21 2018...

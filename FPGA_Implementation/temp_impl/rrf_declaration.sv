@@ -1,0 +1,170 @@
+rrf rregfile(
+	.clk(clk),
+	.reset(reset),
+	.rs1_1tag(rs1_1tag),
+	.rs2_1tag(rs2_1tag),
+	.rs1_2tag(rs1_2tag),
+	.rs2_2tag(rs2_2tag),
+	.com1tag(comptr),
+	.com2tag(comptr2),
+	.rs1_1valid(rvalid1_1),
+	.rs2_1valid(rvalid2_1),
+	.rs1_2valid(rvalid1_2),
+	.rs2_2valid(rvalid2_2),
+	.rs1_1data(rdat1_1),
+	.rs2_1data(rdat2_1),
+	.rs1_2data(rdat1_2),
+	.rs2_2data(rdat2_2),
+	.com1data(com1data),
+	.com2data(com2data),
+	.wrrfaddr1(buf_rrftag_alu1),
+	.wrrfaddr2(buf_rrftag_alu2),
+	.wrrfaddr3(wrrftag_ldst),
+	.wrrfaddr4(buf_rrftag_branch),      
+	.wrrfaddr5(buf_rrftag_mul),
+
+	.wrrfaddr6(buf_rrftag_C1),
+	.wrrfaddr7(buf_rrftag_C2),
+
+	.wrrfdata1(result_alu1),
+	.wrrfdata2(result_alu2),
+	.wrrfdata3(result_ldst),
+	.wrrfdata4(result_branch),
+	.wrrfdata5(result_mul),
+	.wrrfdata6(result_C1),
+	.wrrfdata7(result_C2),
+
+	.wrrfen1(rrfwe_alu1),
+	.wrrfen2(rrfwe_alu2),
+	.wrrfen3(rrfwe_ldst),
+	.wrrfen4(rrfwe_branch),
+	.wrrfen5(rrfwe_mul),
+
+	.wrrfen6(rrfwe_C1),
+	.wrrfen7(rrfwe_C2),
+
+	.dpaddr1(dst1_renamed),
+	.dpaddr2(dst2_renamed),
+	.dpen1(~stall_DP & ~kill_DP & ~inv1_id), // hoge
+	.dpen2(~stall_DP & ~kill_DP & ~inv2_id)  // hoge
+	);
+
+src_manager srcmng1_1(
+	.opr(opr1_1),
+	.opr_rdy(rdy1_1),
+	.exrslt1(result_alu1),
+	.exdst1(buf_rrftag_alu1),
+	.kill_spec1(kill_speculative_alu1 | ~robwe_alu1),
+	.exrslt2(result_alu2),
+	.exdst2(buf_rrftag_alu2),
+	.kill_spec2(kill_speculative_alu2 | ~robwe_alu2),
+	.exrslt3(result_ldst),
+	.exdst3(wrrftag_ldst),
+	.kill_spec3(kill_speculative_ldst | ~robwe_ldst),
+	.exrslt4(result_branch),
+	.exdst4(buf_rrftag_branch),
+	.kill_spec4(~robwe_branch),
+	.exrslt5(result_mul),
+	.exdst5(buf_rrftag_mul),
+	.kill_spec5(kill_speculative_mul | ~robwe_mul),
+
+	.exrslt6(result_C1),
+	.exdst6(buf_rrftag_C1),
+	.kill_spec6(kill_speculative_C1 | ~robwe_C1),
+	.exrslt7(result_C2),
+	.exdst7(buf_rrftag_C2),
+	.kill_spec7(kill_speculative_C2 | ~robwe_C2),
+
+	.src(src1_1),
+	.resolved(resolved1_1)
+	);
+
+src_manager srcmng2_1(
+	.opr(opr2_1),
+	.opr_rdy(rdy2_1),
+	.exrslt1(result_alu1),
+	.exdst1(buf_rrftag_alu1),
+	.kill_spec1(kill_speculative_alu1 | ~robwe_alu1),
+	.exrslt2(result_alu2),
+	.exdst2(buf_rrftag_alu2),
+	.kill_spec2(kill_speculative_alu2 | ~robwe_alu2),
+	.exrslt3(result_ldst),
+	.exdst3(wrrftag_ldst),
+	.kill_spec3(kill_speculative_ldst | ~robwe_ldst),
+	.exrslt4(result_branch),
+	.exdst4(buf_rrftag_branch),
+	.kill_spec4(~robwe_branch),
+	.exrslt5(result_mul),
+	.exdst5(buf_rrftag_mul),
+	.kill_spec5(kill_speculative_mul | ~robwe_mul),
+
+	.exrslt6(result_C1),
+	.exdst6(buf_rrftag_C1),
+	.kill_spec6(kill_speculative_C1 | ~robwe_C1),
+	.exrslt7(result_C2),
+	.exdst7(buf_rrftag_C2),
+	.kill_spec7(kill_speculative_C2 | ~robwe_C2),
+
+	.src(src2_1),
+	.resolved(resolved2_1)
+	);
+
+src_manager srcmng1_2(
+	.opr(opr1_2),
+	.opr_rdy(rdy1_2),
+	.exrslt1(result_alu1),
+	.exdst1(buf_rrftag_alu1),
+	.kill_spec1(kill_speculative_alu1 | ~robwe_alu1),
+	.exrslt2(result_alu2),
+	.exdst2(buf_rrftag_alu2),
+	.kill_spec2(kill_speculative_alu2 | ~robwe_alu2),
+	.exrslt3(result_ldst),
+	.exdst3(wrrftag_ldst),
+	.kill_spec3(kill_speculative_ldst | ~robwe_ldst),
+	.exrslt4(result_branch),
+	.exdst4(buf_rrftag_branch),
+	.kill_spec4(~robwe_branch),
+	.exrslt5(result_mul),
+	.exdst5(buf_rrftag_mul),
+	.kill_spec5(kill_speculative_mul | ~robwe_mul),
+
+	.exrslt6(result_C1),
+	.exdst6(buf_rrftag_C1),
+	.kill_spec6(kill_speculative_C1 | ~robwe_C1),
+	.exrslt7(result_C2),
+	.exdst7(buf_rrftag_C2),
+	.kill_spec7(kill_speculative_C2 | ~robwe_C2),
+
+	.src(src1_2),
+	.resolved(resolved1_2)
+	);
+
+src_manager srcmng2_2(
+	.opr(opr2_2),
+	.opr_rdy(rdy2_2),
+	.exrslt1(result_alu1),
+	.exdst1(buf_rrftag_alu1),
+	.kill_spec1(kill_speculative_alu1 | ~robwe_alu1),
+	.exrslt2(result_alu2),
+	.exdst2(buf_rrftag_alu2),
+	.kill_spec2(kill_speculative_alu2 | ~robwe_alu2),
+	.exrslt3(result_ldst),
+	.exdst3(wrrftag_ldst),
+	.kill_spec3(kill_speculative_ldst | ~robwe_ldst),
+	.exrslt4(result_branch),
+	.exdst4(buf_rrftag_branch),
+	.kill_spec4(~robwe_branch),
+	.exrslt5(result_mul),
+	.exdst5(buf_rrftag_mul),
+	.kill_spec5(kill_speculative_mul | ~robwe_mul),
+
+	.exrslt6(result_C1),
+	.exdst6(buf_rrftag_C1),
+	.kill_spec6(kill_speculative_C1 | ~robwe_C1),
+	.exrslt7(result_C2),
+	.exdst7(buf_rrftag_C2),
+	.kill_spec7(kill_speculative_C2 | ~robwe_C2),
+
+	.src(src2_2),
+	.resolved(resolved2_2)
+	);
