@@ -25,7 +25,11 @@ module decoder(
 	output reg [`MD_OP_WIDTH-1:0] 	  md_req_op,
 	output reg 			  md_req_in_1_signed,
 	output reg 			  md_req_in_2_signed,
-	output reg [`MD_OUT_SEL_WIDTH-1:0] md_req_out_sel
+	output reg [`MD_OUT_SEL_WIDTH-1:0] md_req_out_sel,
+	
+	output reg [`FUNCT7_WIDTH-1:0]	funct7,
+	output reg [`FUNCT3_WIDTH-1:0]	funct3
+
 	);
 
 	wire [`ALU_OP_WIDTH-1:0] 			  srl_or_sra;
@@ -60,6 +64,15 @@ module decoder(
 		alu_op = `ALU_OP_ADD;
 
 		case (opcode)
+			`RV32_CUSTOM_0: begin
+
+
+			end 
+
+			`RV32_CUSTOM_1: begin
+
+			end 
+
 			`RV32_LOAD : begin
 				//           dmem_use = 1'b1;
 				wr_reg = 1'b1;

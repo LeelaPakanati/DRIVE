@@ -118,6 +118,11 @@ module pipeline(
 	reg 				md_req_in_1_signed_1_id;
 	reg 				md_req_in_2_signed_1_id;
 	reg [`MD_OUT_SEL_WIDTH-1:0] 	md_req_out_sel_1_id;
+
+	reg ['FUNCT7_WIDTH-1:0]	funct7_1;
+	reg ['FUNCT3_WIDTH-1:0]	funct3_1;
+
+
 	//Decode Info2
 	reg [`IMM_TYPE_WIDTH-1:0] 	imm_type_2_id;
 	reg [`REG_SEL-1:0] 		rs1_2_id;
@@ -137,6 +142,11 @@ module pipeline(
 	reg 				md_req_in_1_signed_2_id;
 	reg 				md_req_in_2_signed_2_id;
 	reg [`MD_OUT_SEL_WIDTH-1:0] 	md_req_out_sel_2_id;
+
+	reg ['FUNCT7_WIDTH-1:0]	funct7_2;
+	reg ['FUNCT3_WIDTH-1:0]	funct3_2;
+
+
 	//Additional Info
 	reg 				rs1_2_eq_dst1_id;
 	reg 				rs2_2_eq_dst1_id;
@@ -157,6 +167,9 @@ module pipeline(
 	reg [`GSH_BHR_LEN-1:0] 	bhr_id;
 	reg 				isbranch1_id;
 	reg 				isbranch2_id;
+
+
+
 
 	//DP
 	//Source Operand Manager wire
@@ -242,6 +255,7 @@ module pipeline(
 	wire						req2_C2;
 	wire [1:0]					req_C2num;
 
+	//------------------------------------------------
 	wire [`ALU_ENT_SEL:0] allocent1_alu;
 	wire [`ALU_ENT_SEL:0] allocent2_alu;
 	wire 		 rsalu1_we1;
@@ -804,7 +818,7 @@ module pipeline(
 			alu_op_2_id <= alu_op_2;
 			rs_ent_2_id <= (inv2_if | (prcond_if & isbranch1)) ? 0 : rs_ent_2;
 			dmem_size_2_id <= dmem_size_2;
-			dmem_type_2_id <= dmem_type_2;			  
+			dmem_type_2_id <= dmem_type_2;
 			md_req_op_2_id <= md_req_op_2;
 			md_req_in_1_signed_2_id <= md_req_in_1_signed_2;
 			md_req_in_2_signed_2_id <= md_req_in_2_signed_2;
@@ -1793,8 +1807,8 @@ module pipeline(
 		.wdstval_1(wr_reg_1_id),
 		.wsrc_a_1(src_a_sel_1_id),
 		.wsrc_b_1(src_b_sel_1_id),
-		.wfunct7_1(),
-		.wfunct3_1(),
+		.wfunct7_1(funct7_1),
+		.wfunct3_1(funct3_1),
 		.wspectag_1(sptag1_id),
 		.wspecbit_1(spec1_id),
 		//WriteSignal2
@@ -1807,8 +1821,8 @@ module pipeline(
 		.wdstval_2(wr_reg_2_id),
 		.wsrc_a_2(src_a_sel_2_id),
 		.wsrc_b_2(src_b_sel_2_id),
-		.wfunct7_2(),
-		.wfunct3_2(),
+		.wfunct7_2(funct7_2),
+		.wfunct3_2(funct3_2),
 		.wspectag_2(sptag2_id),
 		.wspecbit_2(spec2_id),
 		//ReadSignal
@@ -1820,8 +1834,8 @@ module pipeline(
 		.dstval(dstval_C1),
 		.src_a(src_a_C1),
 		.src_b(src_b_C1),
-		.funct7(),
-		.funct3(),
+		.funct7(funct7_C1),
+		.funct3(funct3_C1),
 		.spectag(spectag_C1),
 		.specbit(specbit_C1),
 		//EXRSLT
@@ -1894,8 +1908,8 @@ module pipeline(
 		.wdstval_1(wr_reg_1_id),
 		.wsrc_a_1(src_a_sel_1_id),
 		.wsrc_b_1(src_b_sel_1_id),
-		.wfunct7_1(),
-		.wfunct3_1(),
+		.wfunct7_1(funct7_1),
+		.wfunct3_1(funct3_1),
 		.wspectag_1(sptag1_id),
 		.wspecbit_1(spec1_id),
 		//WriteSignal2
@@ -1908,8 +1922,8 @@ module pipeline(
 		.wdstval_2(wr_reg_2_id),
 		.wsrc_a_2(src_a_sel_2_id),
 		.wsrc_b_2(src_b_sel_2_id),
-		.wfunct7_2(),
-		.wfunct3_2(),
+		.wfunct7_2(funct7_2),
+		.wfunct3_2(funct3_2),
 		.wspectag_2(sptag2_id),
 		.wspecbit_2(spec2_id),
 		//ReadSignal
@@ -1921,8 +1935,8 @@ module pipeline(
 		.dstval(dstval_C2),
 		.src_a(src_a_C2),
 		.src_b(src_b_C2),
-		.funct7(),
-		.funct3(),
+		.funct7(funct7_C2),
+		.funct3(funct3_C2),
 		.spectag(spectag_C2),
 		.specbit(specbit_C2),
 		//EXRSLT
