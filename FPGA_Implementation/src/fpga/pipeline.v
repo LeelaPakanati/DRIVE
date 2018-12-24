@@ -5,420 +5,420 @@
 `default_nettype none
 
 module pipeline(
-	input wire 			clk,
-	input wire 			reset,
-	output reg [`ADDR_LEN-1:0] 	pc,
-	output wire [8:0] imem_addr,
-	input wire [4*`INSN_LEN-1:0] idata,
-	output wire [`DATA_LEN-1:0] 	dmem_wdata,
-	output wire 			dmem_we,
-	output wire [`ADDR_LEN-1:0] 	dmem_addr,
-	output wire [`ADDR_LEN-1:0]		dmem_addr_shifted,	//{2'b0, dmem_addr[`ADDR_LEN-1:2]} for the dmem connection
-	input wire [`DATA_LEN-1:0] 	dmem_data
-	);
+	input	wire					clk,
+	input	wire					reset,
+	output reg	[`ADDR_LEN-1:0]		pc,
+	output wire [8:0]				imem_addr,
+	input	wire [4*`INSN_LEN-1:0]	idata,
+	output wire [`DATA_LEN-1:0]		dmem_wdata,
+	output wire						dmem_we,
+	output wire [`ADDR_LEN-1:0]		dmem_addr,
+	output wire [`ADDR_LEN-1:0]		dmem_addr_shifted, //{2'b0, dmem_addr[`ADDR_LEN-1:2]} for the dmem connection
+	input	wire [`DATA_LEN-1:0]	dmem_data
+);
 
-	assign dmem_addr_shifted = {2'b0, dmem_addr[`ADDR_LEN-1:2]};
-	assign imem_addr = pc[12:4];
+	assign dmem_addr_shifted	= {2'b0, dmem_addr[`ADDR_LEN-1:2]};
+	assign imem_addr			= pc[12:4];
 
-	wire  stall_IF;
-	wire  kill_IF;
-	wire  stall_ID;
-	wire  kill_ID;
-	wire  stall_DP;
-	wire  kill_DP;
-	//   reg [`ADDR_LEN-1:0] pc;
+	wire stall_IF;
+	wire kill_IF;
+	wire stall_ID;
+	wire kill_ID;
+	wire stall_DP;
+	wire kill_DP;
+	//	reg [`ADDR_LEN-1:0]	pc;
 
 	//IF
 	// Signal from pipe_if
-	wire     	       prcond;
-	wire [`ADDR_LEN-1:0] npc;
-	wire [`INSN_LEN-1:0] inst1;
-	wire [`INSN_LEN-1:0] inst2;
-	wire 		invalid2_pipe;
-	wire [`GSH_BHR_LEN-1:0] bhr;
+	wire					prcond;
+	wire [`ADDR_LEN-1:0]	npc;
+	wire [`INSN_LEN-1:0]	inst1;
+	wire [`INSN_LEN-1:0]	inst2;
+	wire					invalid2_pipe;
+	wire [`GSH_BHR_LEN-1:0]	bhr;
 
 	//Instruction Buffer
-	reg 			   prcond_if;
-	reg [`ADDR_LEN-1:0] 	   npc_if;
-	reg [`ADDR_LEN-1:0] 	   pc_if;
-	reg [`INSN_LEN-1:0] 	   inst1_if;
-	reg [`INSN_LEN-1:0] 	   inst2_if;
-	reg 			   inv1_if;
-	reg 			   inv2_if;
-	reg 			   bhr_if;
-	wire 		   attachable;
+	reg						prcond_if;
+	reg	[`ADDR_LEN-1:0]		npc_if;
+	reg	[`ADDR_LEN-1:0]		pc_if;
+	reg	[`INSN_LEN-1:0]		inst1_if;
+	reg	[`INSN_LEN-1:0]		inst2_if;
+	reg						inv1_if;
+	reg						inv2_if;
+	reg						bhr_if;
+	wire					attachable;
 
 	//ID
 	//Decode Info1
-	wire [`IMM_TYPE_WIDTH-1:0] imm_type_1;
-	wire [`REG_SEL-1:0] 	      rs1_1;
-	wire [`REG_SEL-1:0] 	      rs2_1;
-	wire [`REG_SEL-1:0] 	      rd_1;
-	wire [`SRC_A_SEL_WIDTH-1:0] src_a_sel_1;
-	wire [`SRC_B_SEL_WIDTH-1:0] src_b_sel_1;
-	wire 		       wr_reg_1;
-	wire 		       uses_rs1_1;
-	wire 		       uses_rs2_1;
-	wire 		       illegal_instruction_1;
-	wire [`ALU_OP_WIDTH-1:0]    alu_op_1;
-	wire [`RS_ENT_SEL-1:0]      rs_ent_1;
-	wire [2:0] 		       dmem_size_1;
-	wire [`MEM_TYPE_WIDTH-1:0]  dmem_type_1;			  
-	wire [`MD_OP_WIDTH-1:0]     md_req_op_1;
-	wire 		       md_req_in_1_signed_1;
-	wire 		       md_req_in_2_signed_1;
-	wire [`MD_OUT_SEL_WIDTH-1:0] md_req_out_sel_1;
+	wire [`IMM_TYPE_WIDTH-1:0]	imm_type_1;
+	wire [`REG_SEL-1:0]			rs1_1;
+	wire [`REG_SEL-1:0]			rs2_1;
+	wire [`REG_SEL-1:0]			rd_1;
+	wire [`SRC_A_SEL_WIDTH-1:0]	src_a_sel_1;
+	wire [`SRC_B_SEL_WIDTH-1:0]	src_b_sel_1;
+	wire						wr_reg_1;
+	wire						uses_rs1_1;
+	wire						uses_rs2_1;
+	wire						illegal_instruction_1;
+	wire [`ALU_OP_WIDTH-1:0]	alu_op_1;
+	wire [`RS_ENT_SEL-1:0]		rs_ent_1;
+	wire [2:0]					dmem_size_1;
+	wire [`MEM_TYPE_WIDTH-1:0]	dmem_type_1;
+	wire [`MD_OP_WIDTH-1:0]		md_req_op_1;
+	wire						md_req_in_1_signed_1;
+	wire						md_req_in_2_signed_1;
+	wire [`MD_OUT_SEL_WIDTH-1:0]md_req_out_sel_1;
 	//Decode Info2
-	wire [`IMM_TYPE_WIDTH-1:0] 	imm_type_2;
-	wire [`REG_SEL-1:0] 		rs1_2;
-	wire [`REG_SEL-1:0] 		rs2_2;
-	wire [`REG_SEL-1:0] 		rd_2;
-	wire [`SRC_A_SEL_WIDTH-1:0] 	src_a_sel_2;
-	wire [`SRC_B_SEL_WIDTH-1:0] 	src_b_sel_2;
-	wire 			wr_reg_2;
-	wire 			uses_rs1_2;
-	wire 			uses_rs2_2;
-	wire 			illegal_instruction_2;
-	wire [`ALU_OP_WIDTH-1:0] 	alu_op_2;
-	wire [`RS_ENT_SEL-1:0] 	rs_ent_2;
-	wire [2:0] 			dmem_size_2;
-	wire [`MEM_TYPE_WIDTH-1:0] 	dmem_type_2;			  
-	wire [`MD_OP_WIDTH-1:0] 	md_req_op_2;
-	wire 			md_req_in_1_signed_2;
-	wire 			md_req_in_2_signed_2;
-	wire [`MD_OUT_SEL_WIDTH-1:0] md_req_out_sel_2;
+	wire [`IMM_TYPE_WIDTH-1:0]	imm_type_2;
+	wire [`REG_SEL-1:0]			rs1_2;
+	wire [`REG_SEL-1:0]			rs2_2;
+	wire [`REG_SEL-1:0]			rd_2;
+	wire [`SRC_A_SEL_WIDTH-1:0]	src_a_sel_2;
+	wire [`SRC_B_SEL_WIDTH-1:0]	src_b_sel_2;
+	wire						wr_reg_2;
+	wire						uses_rs1_2;
+	wire						uses_rs2_2;
+	wire						illegal_instruction_2;
+	wire [`ALU_OP_WIDTH-1:0]	alu_op_2;
+	wire [`RS_ENT_SEL-1:0]		rs_ent_2;
+	wire [2:0]					dmem_size_2;
+	wire [`MEM_TYPE_WIDTH-1:0]	dmem_type_2;
+	wire [`MD_OP_WIDTH-1:0]		md_req_op_2;
+	wire						md_req_in_1_signed_2;
+	wire						md_req_in_2_signed_2;
+	wire [`MD_OUT_SEL_WIDTH-1:0]md_req_out_sel_2;
 	//Additional Info
-	wire [`SPECTAG_LEN-1:0] 	sptag1;
-	wire [`SPECTAG_LEN-1:0] 	sptag2;
-	wire [`SPECTAG_LEN-1:0] 	tagreg;
-	wire 			spec1;
-	wire 			spec2;
-	wire 			isbranch1;
-	wire 			isbranch2;
-	wire 			branchvalid1;
-	wire 			branchvalid2;
+	wire [`SPECTAG_LEN-1:0]		sptag1;
+	wire [`SPECTAG_LEN-1:0]		sptag2;
+	wire [`SPECTAG_LEN-1:0]		tagreg;
+	wire						spec1;
+	wire						spec2;
+	wire						isbranch1;
+	wire						isbranch2;
+	wire						branchvalid1;
+	wire						branchvalid2;
 
 	//Latch
 	//Decode Info1
-	reg [`IMM_TYPE_WIDTH-1:0] 	imm_type_1_id;
-	reg [`REG_SEL-1:0] 		rs1_1_id;
-	reg [`REG_SEL-1:0] 		rs2_1_id;
-	reg [`REG_SEL-1:0] 		rd_1_id;
-	reg [`SRC_A_SEL_WIDTH-1:0] 	src_a_sel_1_id;
-	reg [`SRC_B_SEL_WIDTH-1:0] 	src_b_sel_1_id;
-	reg 				wr_reg_1_id;
-	reg 				uses_rs1_1_id;
-	reg 				uses_rs2_1_id;
-	reg 				illegal_instruction_1_id;
-	reg [`ALU_OP_WIDTH-1:0] 	alu_op_1_id;
-	reg [`RS_ENT_SEL-1:0] 	rs_ent_1_id;
-	reg [2:0] 			dmem_size_1_id;
-	reg [`MEM_TYPE_WIDTH-1:0] 	dmem_type_1_id;			  
-	reg [`MD_OP_WIDTH-1:0] 	md_req_op_1_id;
-	reg 				md_req_in_1_signed_1_id;
-	reg 				md_req_in_2_signed_1_id;
-	reg [`MD_OUT_SEL_WIDTH-1:0] 	md_req_out_sel_1_id;
+	reg [`IMM_TYPE_WIDTH-1:0]	imm_type_1_id;
+	reg [`REG_SEL-1:0]			rs1_1_id;
+	reg [`REG_SEL-1:0]			rs2_1_id;
+	reg [`REG_SEL-1:0]			rd_1_id;
+	reg [`SRC_A_SEL_WIDTH-1:0]	src_a_sel_1_id;
+	reg [`SRC_B_SEL_WIDTH-1:0]	src_b_sel_1_id;
+	reg								wr_reg_1_id;
+	reg								uses_rs1_1_id;
+	reg							uses_rs2_1_id;
+	reg								illegal_instruction_1_id;
+	reg [`ALU_OP_WIDTH-1:0]		alu_op_1_id;
+	reg [`RS_ENT_SEL-1:0]		rs_ent_1_id;
+	reg [2:0]					dmem_size_1_id;
+	reg [`MEM_TYPE_WIDTH-1:0]	dmem_type_1_id;
+	reg [`MD_OP_WIDTH-1:0]		md_req_op_1_id;
+	reg							md_req_in_1_signed_1_id;
+	reg							md_req_in_2_signed_1_id;
+	reg [`MD_OUT_SEL_WIDTH-1:0]	md_req_out_sel_1_id;
 
-	reg ['FUNCT7_WIDTH-1:0]	funct7_1;
-	reg ['FUNCT3_WIDTH-1:0]	funct3_1;
+	reg ['FUNCT7_WIDTH-1:0]		funct7_1;
+	reg ['FUNCT3_WIDTH-1:0]		funct3_1;
 
 
 	//Decode Info2
-	reg [`IMM_TYPE_WIDTH-1:0] 	imm_type_2_id;
-	reg [`REG_SEL-1:0] 		rs1_2_id;
-	reg [`REG_SEL-1:0] 		rs2_2_id;
-	reg [`REG_SEL-1:0] 		rd_2_id;
-	reg [`SRC_A_SEL_WIDTH-1:0] 	src_a_sel_2_id;
-	reg [`SRC_B_SEL_WIDTH-1:0] 	src_b_sel_2_id;
-	reg 				wr_reg_2_id;
-	reg 				uses_rs1_2_id;
-	reg 				uses_rs2_2_id;
-	reg 				illegal_instruction_2_id;
-	reg [`ALU_OP_WIDTH-1:0] 	alu_op_2_id;
-	reg [`RS_ENT_SEL-1:0] 	rs_ent_2_id;
-	reg [2:0] 			dmem_size_2_id;
-	reg [`MEM_TYPE_WIDTH-1:0] 	dmem_type_2_id;			  
-	reg [`MD_OP_WIDTH-1:0] 	md_req_op_2_id;
-	reg 				md_req_in_1_signed_2_id;
-	reg 				md_req_in_2_signed_2_id;
-	reg [`MD_OUT_SEL_WIDTH-1:0] 	md_req_out_sel_2_id;
+	reg [`IMM_TYPE_WIDTH-1:0]	imm_type_2_id;
+	reg [`REG_SEL-1:0]			rs1_2_id;
+	reg [`REG_SEL-1:0]			rs2_2_id;
+	reg [`REG_SEL-1:0]			rd_2_id;
+	reg [`SRC_A_SEL_WIDTH-1:0]	src_a_sel_2_id;
+	reg [`SRC_B_SEL_WIDTH-1:0]	src_b_sel_2_id;
+	reg							wr_reg_2_id;
+	reg							uses_rs1_2_id;
+	reg							uses_rs2_2_id;
+	reg							illegal_instruction_2_id;
+	reg [`ALU_OP_WIDTH-1:0]		alu_op_2_id;
+	reg [`RS_ENT_SEL-1:0]		rs_ent_2_id;
+	reg [2:0]					dmem_size_2_id;
+	reg [`MEM_TYPE_WIDTH-1:0]	dmem_type_2_id;
+	reg [`MD_OP_WIDTH-1:0]		md_req_op_2_id;
+	reg							md_req_in_1_signed_2_id;
+	reg							md_req_in_2_signed_2_id;
+	reg [`MD_OUT_SEL_WIDTH-1:0]	md_req_out_sel_2_id;
 
-	reg ['FUNCT7_WIDTH-1:0]	funct7_2;
-	reg ['FUNCT3_WIDTH-1:0]	funct3_2;
+	reg ['FUNCT7_WIDTH-1:0]		funct7_2;
+	reg ['FUNCT3_WIDTH-1:0]		funct3_2;
 
 
 	//Additional Info
-	reg 				rs1_2_eq_dst1_id;
-	reg 				rs2_2_eq_dst1_id;
-	reg [`SPECTAG_LEN-1:0] 	sptag1_id;
-	reg [`SPECTAG_LEN-1:0] 	sptag2_id;
-	reg [`SPECTAG_LEN-1:0] 	tagreg_id;
-	reg 				spec1_id;
-	reg 				spec2_id;
-	reg [`INSN_LEN-1:0] 		inst1_id;
-	reg [`INSN_LEN-1:0] 		inst2_id;
-	reg 				prcond1_id;
-	reg 				prcond2_id;
-	reg 				inv1_id;
-	reg 				inv2_id;
-	reg [`ADDR_LEN-1:0] 		praddr1_id;
-	reg [`ADDR_LEN-1:0] 		praddr2_id;
-	reg [`ADDR_LEN-1:0] 		pc_id;
-	reg [`GSH_BHR_LEN-1:0] 	bhr_id;
-	reg 				isbranch1_id;
-	reg 				isbranch2_id;
+	reg						rs1_2_eq_dst1_id;
+	reg						rs2_2_eq_dst1_id;
+	reg [`SPECTAG_LEN-1:0]	sptag1_id;
+	reg [`SPECTAG_LEN-1:0]	sptag2_id;
+	reg [`SPECTAG_LEN-1:0]	tagreg_id;
+	reg						spec1_id;
+	reg						spec2_id;
+	reg [`INSN_LEN-1:0]		inst1_id;
+	reg [`INSN_LEN-1:0]		inst2_id;
+	reg						prcond1_id;
+	reg						prcond2_id;
+	reg						inv1_id;
+	reg						inv2_id;
+	reg [`ADDR_LEN-1:0]		praddr1_id;
+	reg [`ADDR_LEN-1:0]		praddr2_id;
+	reg [`ADDR_LEN-1:0]		pc_id;
+	reg [`GSH_BHR_LEN-1:0]	bhr_id;
+	reg						isbranch1_id;
+	reg						isbranch2_id;
 
 
 
 
 	//DP
 	//Source Operand Manager wire
-	wire [`DATA_LEN-1:0] opr1_1;
-	wire [`DATA_LEN-1:0] opr2_1;
-	wire [`DATA_LEN-1:0] opr1_2;
-	wire [`DATA_LEN-1:0] opr2_2;
-	wire 		rdy1_1;
-	wire 		rdy2_1;
-	wire 		rdy1_2;
-	wire 		rdy2_2;
+	wire [`DATA_LEN-1:0]	opr1_1;
+	wire [`DATA_LEN-1:0]	opr2_1;
+	wire [`DATA_LEN-1:0]	opr1_2;
+	wire [`DATA_LEN-1:0]	opr2_2;
+	wire					rdy1_1;
+	wire					rdy2_1;
+	wire					rdy1_2;
+	wire					rdy2_2;
 
 	//rrf_FL wire
-	wire 		alloc_rrf;
-	wire [`RRF_SEL-1:0] 	dst1_renamed;
-	wire [`RRF_SEL-1:0] 	dst2_renamed;
-	wire [`RRF_SEL:0] 	freenum;
-	wire [`RRF_SEL-1:0] 	rrfptr;
-	wire [`RRF_SEL-1:0] 	rrftagfix;
+	wire					alloc_rrf;
+	wire [`RRF_SEL-1:0]		dst1_renamed;
+	wire [`RRF_SEL-1:0]		dst2_renamed;
+	wire [`RRF_SEL:0]		freenum;
+	wire [`RRF_SEL-1:0]		rrfptr;
+	wire [`RRF_SEL-1:0]		rrftagfix;
 
-	//arf wire 
-	wire [`RRF_SEL-1:0] 	rs1_1tag;
-	wire [`RRF_SEL-1:0] 	rs2_1tag;
-	wire [`RRF_SEL-1:0] 	rs1_2tag;
-	wire [`RRF_SEL-1:0] 	rs2_2tag;
-	wire [`DATA_LEN-1:0] adat1_1;
-	wire [`DATA_LEN-1:0] adat2_1;
-	wire [`DATA_LEN-1:0] adat1_2;
-	wire [`DATA_LEN-1:0] adat2_2;
-	wire 		abusy1_1;
-	wire 		abusy2_1;
-	wire 		abusy1_2;
-	wire 		abusy2_2;
+	//arf wire
+	wire [`RRF_SEL-1:0]		rs1_1tag;
+	wire [`RRF_SEL-1:0]		rs2_1tag;
+	wire [`RRF_SEL-1:0]		rs1_2tag;
+	wire [`RRF_SEL-1:0]		rs2_2tag;
+	wire [`DATA_LEN-1:0]	adat1_1;
+	wire [`DATA_LEN-1:0]	adat2_1;
+	wire [`DATA_LEN-1:0]	adat1_2;
+	wire [`DATA_LEN-1:0]	adat2_2;
+	wire					abusy1_1;
+	wire					abusy2_1;
+	wire					abusy1_2;
+	wire					abusy2_2;
 
 	//rrf wire
-	wire [`DATA_LEN-1:0] rdat1_1;
-	wire [`DATA_LEN-1:0] rdat2_1;
-	wire [`DATA_LEN-1:0] rdat1_2;
-	wire [`DATA_LEN-1:0] rdat2_2;
-	wire 		rvalid1_1;
-	wire 		rvalid2_1;
-	wire 		rvalid1_2;
-	wire 		rvalid2_2;
-	wire [`DATA_LEN-1:0] com1data;
-	wire [`DATA_LEN-1:0] com2data;
+	wire [`DATA_LEN-1:0]	rdat1_1;
+	wire [`DATA_LEN-1:0]	rdat2_1;
+	wire [`DATA_LEN-1:0]	rdat1_2;
+	wire [`DATA_LEN-1:0]	rdat2_2;
+	wire					rvalid1_1;
+	wire					rvalid2_1;
+	wire					rvalid1_2;
+	wire					rvalid2_2;
+	wire [`DATA_LEN-1:0]	com1data;
+	wire [`DATA_LEN-1:0]	com2data;
 
 	//Src Manager wire
-	wire [`DATA_LEN-1:0] src1_1; //To reservation station
-	wire [`DATA_LEN-1:0] src2_1; 
-	wire [`DATA_LEN-1:0] src1_2;
-	wire [`DATA_LEN-1:0] src2_2;
-	wire 		resolved1_1;
-	wire 		resolved2_1;
-	wire 		resolved1_2;
-	wire 		resolved2_2;
+	wire [`DATA_LEN-1:0]	src1_1; //To reservation station
+	wire [`DATA_LEN-1:0]	src2_1;
+	wire [`DATA_LEN-1:0]	src1_2;
+	wire [`DATA_LEN-1:0]	src2_2;
+	wire					resolved1_1;
+	wire					resolved2_1;
+	wire					resolved1_2;
+	wire					resolved2_2;
 
 	//Immgen wire
-	wire [`DATA_LEN-1:0] imm1; // To reservation station
-	wire [`DATA_LEN-1:0] imm2;
+	wire [`DATA_LEN-1:0]	imm1; // To reservation station
+	wire [`DATA_LEN-1:0]	imm2;
 	//BrImmgen wire
-	wire [`DATA_LEN-1:0] brimm1; //To reservation station
-	wire [`DATA_LEN-1:0] brimm2;
+	wire [`DATA_LEN-1:0]	brimm1; //To reservation station
+	wire [`DATA_LEN-1:0]	brimm2;
 
 	//RS Request Generator wire
-	wire 		req1_alu;
+	wire		req1_alu;
 	wire 		req2_alu;
-	wire [1:0] 		req_alunum;
-	wire 		req1_branch;
-	wire 		req2_branch;
-	wire [1:0] 		req_branchnum;
-	wire 		req1_mul;
-	wire 		req2_mul;
-	wire [1:0] 		req_mulnum;
-	wire 		req1_ldst;
-	wire 		req2_ldst;
-	wire [1:0] 		req_ldstnum;
+	wire [1:0]	req_alunum;
+	wire		req1_branch;
+	wire		req2_branch;
+	wire [1:0]	req_branchnum;
+	wire		req1_mul;
+	wire		req2_mul;
+	wire [1:0]	req_mulnum;
+	wire		req1_ldst;
+	wire		req2_ldst;
+	wire [1:0]	req_ldstnum;
 	//-----C1------------------------------------------
-	wire						req1_C1;
-	wire						req2_C1;
-	wire [1:0]					req_C1num;
+	wire		req1_C1;
+	wire		req2_C1;
+	wire [1:0]	req_C1num;
 	//-----C2------------------------------------------
-	wire						req1_C2;
-	wire						req2_C2;
-	wire [1:0]					req_C2num;
+	wire		req1_C2;
+	wire		req2_C2;
+	wire [1:0]	req_C2num;
 
 	//------------------------------------------------
-	wire [`ALU_ENT_SEL:0] allocent1_alu;
-	wire [`ALU_ENT_SEL:0] allocent2_alu;
-	wire 		 rsalu1_we1;
-	wire 		 rsalu1_we2;
-	wire 		 rsalu2_we1;
-	wire 		 rsalu2_we2;
-	wire [`ALU_ENT_NUM-1:0] busyvec_alu1;
-	wire [`ALU_ENT_NUM-1:0] busyvec_alu2;
-	wire [2*`ALU_ENT_NUM-1:0] busyvec_alu;
-	wire [`ALU_ENT_NUM:0]     ready_alu;
+	wire [`ALU_ENT_SEL:0]		allocent1_alu;
+	wire [`ALU_ENT_SEL:0]		allocent2_alu;
+	wire						rsalu1_we1;
+	wire						rsalu1_we2;
+	wire						rsalu2_we1;
+	wire						rsalu2_we2;
+	wire [`ALU_ENT_NUM-1:0]		busyvec_alu1;
+	wire [`ALU_ENT_NUM-1:0]		busyvec_alu2;
+	wire [2*`ALU_ENT_NUM-1:0]	busyvec_alu;
+	wire [`ALU_ENT_NUM:0]		ready_alu;
 
-	wire 		   issuevalid_alu1;
-	wire [`ALU_ENT_SEL-1:0] issueent_alu1;
-	wire 		   issue_alu1;
-	wire 		   issuevalid_alu2;
-	wire [`ALU_ENT_SEL-1:0] issueent_alu2;
-	wire 		   issue_alu2;
-	wire 		   allocatable_alu;
-	wire [`ALU_ENT_NUM*(`RRF_SEL+2)-1:0] histvect1;
-	wire [`ALU_ENT_NUM*(`RRF_SEL+2)-1:0] histvect2;
-	wire [`RRF_SEL+1:0] 			entval_alu1;
-	wire [`RRF_SEL+1:0] 			entval_alu2;
+	wire						issuevalid_alu1;
+	wire [`ALU_ENT_SEL-1:0]		issueent_alu1;
+	wire						issue_alu1;
+	wire						issuevalid_alu2;
+	wire [`ALU_ENT_SEL-1:0]		issueent_alu2;
+	wire						issue_alu2;
+	wire						allocatable_alu;
+	wire [`ALU_ENT_NUM*(`RRF_SEL+2)-1:0]	histvect1;
+	wire [`ALU_ENT_NUM*(`RRF_SEL+2)-1:0]	histvect2;
+	wire [`RRF_SEL+1:0]			entval_alu1;
+	wire [`RRF_SEL+1:0]			entval_alu2;
 
-	wire 				nextrrfcyc;
+	wire nextrrfcyc;
 
-	wire [`DATA_LEN-1:0]    ex_src1_alu1;
-	wire [`DATA_LEN-1:0]    ex_src2_alu1;
-	wire [`ALU_ENT_NUM-1:0] ready_alu1;
-	wire [`ADDR_LEN-1:0]    pc_alu1;
-	wire [`DATA_LEN-1:0]    imm_alu1;
-	wire [`RRF_SEL-1:0] 	   rrftag_alu1;
-	wire 		   dstval_alu1;
-	wire [`SRC_A_SEL_WIDTH-1:0] src_a_alu1;
-	wire [`SRC_B_SEL_WIDTH-1:0] src_b_alu1;
-	wire [`ALU_OP_WIDTH-1:0]    alu_op_alu1;
-	wire [`SPECTAG_LEN-1:0]     spectag_alu1;
-	wire 		       specbit_alu1;
+	wire [`DATA_LEN-1:0]		ex_src1_alu1;
+	wire [`DATA_LEN-1:0]		ex_src2_alu1;
+	wire [`ALU_ENT_NUM-1:0]		ready_alu1;
+	wire [`ADDR_LEN-1:0]		pc_alu1;
+	wire [`DATA_LEN-1:0]		imm_alu1;
+	wire [`RRF_SEL-1:0]			rrftag_alu1;
+	wire						dstval_alu1;
+	wire [`SRC_A_SEL_WIDTH-1:0]	src_a_alu1;
+	wire [`SRC_B_SEL_WIDTH-1:0]	src_b_alu1;
+	wire [`ALU_OP_WIDTH-1:0]	alu_op_alu1;
+	wire [`SPECTAG_LEN-1:0]		spectag_alu1;
+	wire						specbit_alu1;
 
-	wire [`DATA_LEN-1:0]        ex_src1_alu2;
-	wire [`DATA_LEN-1:0]        ex_src2_alu2;
-	wire [`ALU_ENT_NUM-1:0]     ready_alu2;
-	wire [`ADDR_LEN-1:0]        pc_alu2;
-	wire [`DATA_LEN-1:0]        imm_alu2;
-	wire [`RRF_SEL-1:0] 	       rrftag_alu2;
-	wire 		       dstval_alu2;
-	wire [`SRC_A_SEL_WIDTH-1:0] src_a_alu2;
-	wire [`SRC_B_SEL_WIDTH-1:0] src_b_alu2;
-	wire [`ALU_OP_WIDTH-1:0]    alu_op_alu2;
-	wire [`SPECTAG_LEN-1:0]     spectag_alu2;
-	wire 		       specbit_alu2;
+	wire [`DATA_LEN-1:0]		ex_src1_alu2;
+	wire [`DATA_LEN-1:0]		ex_src2_alu2;
+	wire [`ALU_ENT_NUM-1:0]		ready_alu2;
+	wire [`ADDR_LEN-1:0]		pc_alu2;
+	wire [`DATA_LEN-1:0]		imm_alu2;
+	wire [`RRF_SEL-1:0]			rrftag_alu2;
+	wire						dstval_alu2;
+	wire [`SRC_A_SEL_WIDTH-1:0]	src_a_alu2;
+	wire [`SRC_B_SEL_WIDTH-1:0]	src_b_alu2;
+	wire [`ALU_OP_WIDTH-1:0]	alu_op_alu2;
+	wire [`SPECTAG_LEN-1:0]		spectag_alu2;
+	wire						specbit_alu2;
 
-	wire [`LDST_ENT_SEL-1:0]    allocent1_ldst;
-	wire [`LDST_ENT_SEL-1:0]    allocent2_ldst;
-	wire [`LDST_ENT_NUM-1:0]    busyvec_ldst;
-	wire [`LDST_ENT_NUM-1:0]    prbusyvec_next_ldst;
-	wire [`LDST_ENT_NUM-1:0]    ready_ldst;
-	wire 		       issuevalid_ldst;
-	wire [`LDST_ENT_SEL-1:0]    issueent_ldst;
-	wire 		       issue_ldst;
-	wire 		       allocatable_ldst;
+	wire [`LDST_ENT_SEL-1:0]	allocent1_ldst;
+	wire [`LDST_ENT_SEL-1:0]	allocent2_ldst;
+	wire [`LDST_ENT_NUM-1:0]	busyvec_ldst;
+	wire [`LDST_ENT_NUM-1:0]	prbusyvec_next_ldst;
+	wire [`LDST_ENT_NUM-1:0]	ready_ldst;
+	wire							issuevalid_ldst;
+	wire [`LDST_ENT_SEL-1:0]	issueent_ldst;
+	wire							issue_ldst;
+	wire							allocatable_ldst;
 
-	wire [`DATA_LEN-1:0]        ex_src1_ldst;
-	wire [`DATA_LEN-1:0]        ex_src2_ldst;
-	wire [`ADDR_LEN-1:0]        pc_ldst;
-	wire [`DATA_LEN-1:0]        imm_ldst;
-	wire [`RRF_SEL-1:0] 	       rrftag_ldst;
-	wire 		       dstval_ldst;
-	wire [`SPECTAG_LEN-1:0]     spectag_ldst;
-	wire 		       specbit_ldst;
+	wire [`DATA_LEN-1:0]		ex_src1_ldst;
+	wire [`DATA_LEN-1:0]		ex_src2_ldst;
+	wire [`ADDR_LEN-1:0]		pc_ldst;
+	wire [`DATA_LEN-1:0]		imm_ldst;
+	wire [`RRF_SEL-1:0]			rrftag_ldst;
+	wire						dstval_ldst;
+	wire [`SPECTAG_LEN-1:0]		spectag_ldst;
+	wire						specbit_ldst;
 
-	wire [`BRANCH_ENT_SEL-1:0]  allocent1_branch;
-	wire [`BRANCH_ENT_SEL-1:0]  allocent2_branch;
-	wire [`BRANCH_ENT_NUM-1:0]  busyvec_branch;
-	wire [`BRANCH_ENT_NUM-1:0]  prbusyvec_next_branch;
-	wire [`BRANCH_ENT_NUM-1:0]  ready_branch;
-	wire 		       issuevalid_branch;
-	wire [`BRANCH_ENT_SEL-1:0]  issueent_branch;
-	wire 		       issue_branch;
-	wire 		       allocatable_branch;
+	wire [`BRANCH_ENT_SEL-1:0]	allocent1_branch;
+	wire [`BRANCH_ENT_SEL-1:0]	allocent2_branch;
+	wire [`BRANCH_ENT_NUM-1:0]	busyvec_branch;
+	wire [`BRANCH_ENT_NUM-1:0]	prbusyvec_next_branch;
+	wire [`BRANCH_ENT_NUM-1:0]	ready_branch;
+	wire						issuevalid_branch;
+	wire [`BRANCH_ENT_SEL-1:0]	issueent_branch;
+	wire						issue_branch;
+	wire						allocatable_branch;
 
-	wire [`DATA_LEN-1:0]        ex_src1_branch;
-	wire [`DATA_LEN-1:0]        ex_src2_branch;
-	wire [`ADDR_LEN-1:0]        pc_branch;
-	wire [`DATA_LEN-1:0]        imm_branch;
-	wire [`RRF_SEL-1:0] 	       rrftag_branch;
-	wire 		       dstval_branch;
-	wire [`ALU_OP_WIDTH-1:0]    alu_op_branch;
-	wire [`SPECTAG_LEN-1:0]     spectag_branch;
-	wire 		       specbit_branch;
-	wire [`GSH_BHR_LEN-1:0]     bhr_branch;
-	wire 		       prcond_branch;
-	wire [`ADDR_LEN-1:0]        praddr_branch;
-	wire [6:0] 		       opcode_branch;
+	wire [`DATA_LEN-1:0]		ex_src1_branch;
+	wire [`DATA_LEN-1:0]		ex_src2_branch;
+	wire [`ADDR_LEN-1:0]		pc_branch;
+	wire [`DATA_LEN-1:0]		imm_branch;
+	wire [`RRF_SEL-1:0]			rrftag_branch;
+	wire						dstval_branch;
+	wire [`ALU_OP_WIDTH-1:0]	alu_op_branch;
+	wire [`SPECTAG_LEN-1:0]		spectag_branch;
+	wire							specbit_branch;
+	wire [`GSH_BHR_LEN-1:0]		bhr_branch;
+	wire						prcond_branch;
+	wire [`ADDR_LEN-1:0]		praddr_branch;
+	wire [6:0]					opcode_branch;
 
-	wire [`MUL_ENT_SEL-1:0]       allocent1_mul;
-	wire [`MUL_ENT_SEL-1:0]       allocent2_mul;
-	wire [`MUL_ENT_NUM-1:0]     busyvec_mul;
-	wire [`MUL_ENT_NUM-1:0]     ready_mul;
-	wire 		       issuevalid_mul;
-	wire [`MUL_ENT_SEL-1:0]     issueent_mul;
-	wire 		       issue_mul;
-	wire 		       allocatable_mul;
+	wire [`MUL_ENT_SEL-1:0]		allocent1_mul;
+	wire [`MUL_ENT_SEL-1:0]		allocent2_mul;
+	wire [`MUL_ENT_NUM-1:0]		busyvec_mul;
+	wire [`MUL_ENT_NUM-1:0]		ready_mul;
+	wire						issuevalid_mul;
+	wire [`MUL_ENT_SEL-1:0]		issueent_mul;
+	wire						issue_mul;
+	wire						allocatable_mul;
 
-	wire [`DATA_LEN-1:0]        ex_src1_mul;
-	wire [`DATA_LEN-1:0]        ex_src2_mul;
-	wire [`ADDR_LEN-1:0]        pc_mul;
-	wire [`RRF_SEL-1:0] 	       rrftag_mul;
-	wire 		       dstval_mul;
-	wire [`SPECTAG_LEN-1:0]     spectag_mul;
-	wire 		       specbit_mul;
-	wire 		       src1_signed_mul;
-	wire 		       src2_signed_mul;
-	wire 		       sel_lohi_mul;
+	wire [`DATA_LEN-1:0]		ex_src1_mul;
+	wire [`DATA_LEN-1:0]		ex_src2_mul;
+	wire [`ADDR_LEN-1:0]		pc_mul;
+	wire [`RRF_SEL-1:0]			rrftag_mul;
+	wire						dstval_mul;
+	wire [`SPECTAG_LEN-1:0]		spectag_mul;
+	wire						specbit_mul;
+	wire						src1_signed_mul;
+	wire						src2_signed_mul;
+	wire						sel_lohi_mul;
 
 //-----C1------------------------------------------
 	//alloc unit
-	wire [`FPGA_ENT_SEL-1:0]		allocent1_C1;
-	wire [`FPGA_ENT_SEL-1:0]		allocent2_C1;
-	wire [`FPGA_ENT_NUM-1:0]		busyvec_C1;
-	wire [`FPGA_ENT_NUM-1:0]		ready_C1;
+	wire [`FPGA_ENT_SEL-1:0]	allocent1_C1;
+	wire [`FPGA_ENT_SEL-1:0]	allocent2_C1;
+	wire [`FPGA_ENT_NUM-1:0]	busyvec_C1;
+	wire [`FPGA_ENT_NUM-1:0]	ready_C1;
 	wire						allocatable_C1;
 
 	//wires for issue unit
 	wire						issuevalid_C1;
-	wire [`FPGA_ENT_SEL-1:0]		issueent_C1;
+	wire [`FPGA_ENT_SEL-1:0]	issueent_C1;
 	wire						issue_C1;
 
 	//issued outputs from RS
 	wire [`DATA_LEN-1:0]		ex_src1_C1;
 	wire [`DATA_LEN-1:0]		ex_src2_C1;
-	wire [`DATA_LEN-1:0]        imm_C1;
+	wire [`DATA_LEN-1:0]		imm_C1;
 	wire [`RRF_SEL-1:0]			rrftag_C1;
 	wire						dstval_C1;
 	wire [`SPECTAG_LEN-1:0]		spectag_C1;
 	wire						specbit_C1;
-	wire [`SRC_A_SEL_WIDTH-1:0] src_a_C1;
-	wire [`SRC_B_SEL_WIDTH-1:0] src_b_C1;
+	wire [`SRC_A_SEL_WIDTH-1:0]	src_a_C1;
+	wire [`SRC_B_SEL_WIDTH-1:0]	src_b_C1;
 	wire [`FUNCT7_WIDTH-1:0]	funct7_C1;
 	wire [`FUNCT3_WIDTH-1:0]	funct3_C1;
 
 	//-----C2------------------------------------------
 	//alloc unit
-	wire [`FPGA_ENT_SEL-1:0]		allocent1_C2;
-	wire [`FPGA_ENT_SEL-1:0]		allocent2_C2;
-	wire [`FPGA_ENT_NUM-1:0]		busyvec_C2;
-	wire [`FPGA_ENT_NUM-1:0]		ready_C2;
+	wire [`FPGA_ENT_SEL-1:0]	allocent1_C2;
+	wire [`FPGA_ENT_SEL-1:0]	allocent2_C2;
+	wire [`FPGA_ENT_NUM-1:0]	busyvec_C2;
+	wire [`FPGA_ENT_NUM-1:0]	ready_C2;
 	wire						allocatable_C2;
 
 	//wires for issue unit
 	wire						issuevalid_C2;
-	wire [`FPGA_ENT_SEL-1:0]		issueent_C2;
+	wire [`FPGA_ENT_SEL-1:0]	issueent_C2;
 	wire						issue_C2;
 
 	//issued outputs from RS
 	wire [`DATA_LEN-1:0]		ex_src1_C2;
 	wire [`DATA_LEN-1:0]		ex_src2_C2;
-	wire [`DATA_LEN-1:0]        imm_C2;
+	wire [`DATA_LEN-1:0]		imm_C2;
 	wire [`RRF_SEL-1:0]			rrftag_C2;
 	wire						dstval_C2;
 	wire [`SPECTAG_LEN-1:0]		spectag_C2;
 	wire						specbit_C2;
-	wire [`SRC_A_SEL_WIDTH-1:0] src_a_C2;
-	wire [`SRC_B_SEL_WIDTH-1:0] src_b_C2;
+	wire [`SRC_A_SEL_WIDTH-1:0]	src_a_C2;
+	wire [`SRC_B_SEL_WIDTH-1:0]	src_b_C2;
 	wire [`FUNCT7_WIDTH-1:0]	funct7_C2;
 	wire [`FUNCT3_WIDTH-1:0]	funct3_C2;
 
@@ -426,113 +426,113 @@ module pipeline(
 
 	//EX
 	//ALU1
-	wire [`DATA_LEN-1:0]        result_alu1;
-	wire 		       rrfwe_alu1;
-	wire 		       robwe_alu1;
-	wire 		       kill_speculative_alu1;
+	wire [`DATA_LEN-1:0]		result_alu1;
+	wire						rrfwe_alu1;
+	wire						robwe_alu1;
+	wire						kill_speculative_alu1;
 
-	reg [`DATA_LEN-1:0] 	       buf_ex_src1_alu1;
-	reg [`DATA_LEN-1:0] 	       buf_ex_src2_alu1;
-	reg [`ADDR_LEN-1:0] 	       buf_pc_alu1;
-	reg [`DATA_LEN-1:0] 	       buf_imm_alu1;
-	reg [`RRF_SEL-1:0] 	       buf_rrftag_alu1;
-	reg 			       buf_dstval_alu1;
-	reg [`SRC_A_SEL_WIDTH-1:0]  buf_src_a_alu1;
-	reg [`SRC_B_SEL_WIDTH-1:0]  buf_src_b_alu1;
-	reg [`ALU_OP_WIDTH-1:0]     buf_alu_op_alu1;
-	reg [`SPECTAG_LEN-1:0]      buf_spectag_alu1;
-	reg 			       buf_specbit_alu1;
+	reg [`DATA_LEN-1:0]			buf_ex_src1_alu1;
+	reg [`DATA_LEN-1:0]			buf_ex_src2_alu1;
+	reg [`ADDR_LEN-1:0]			buf_pc_alu1;
+	reg [`DATA_LEN-1:0]			buf_imm_alu1;
+	reg [`RRF_SEL-1:0]			buf_rrftag_alu1;
+	reg							buf_dstval_alu1;
+	reg [`SRC_A_SEL_WIDTH-1:0]	buf_src_a_alu1;
+	reg [`SRC_B_SEL_WIDTH-1:0]	buf_src_b_alu1;
+	reg [`ALU_OP_WIDTH-1:0]		buf_alu_op_alu1;
+	reg [`SPECTAG_LEN-1:0]		buf_spectag_alu1;
+	reg							buf_specbit_alu1;
 	//ALU2
-	wire [`DATA_LEN-1:0]        result_alu2;
-	wire 		       rrfwe_alu2;
-	wire 		       robwe_alu2;
-	wire 		       kill_speculative_alu2;
+	wire [`DATA_LEN-1:0]		result_alu2;
+	wire						rrfwe_alu2;
+	wire						robwe_alu2;
+	wire						kill_speculative_alu2;
 
-	reg [`DATA_LEN-1:0] 	       buf_ex_src1_alu2;
-	reg [`DATA_LEN-1:0] 	       buf_ex_src2_alu2;
-	reg [`ADDR_LEN-1:0] 	       buf_pc_alu2;
-	reg [`DATA_LEN-1:0] 	       buf_imm_alu2;
-	reg [`RRF_SEL-1:0] 	       buf_rrftag_alu2;
-	reg 			       buf_dstval_alu2;
-	reg [`SRC_A_SEL_WIDTH-1:0]  buf_src_a_alu2;
-	reg [`SRC_B_SEL_WIDTH-1:0]  buf_src_b_alu2;
-	reg [`ALU_OP_WIDTH-1:0]     buf_alu_op_alu2;
-	reg [`SPECTAG_LEN-1:0]      buf_spectag_alu2;
-	reg 			       buf_specbit_alu2;
+	reg [`DATA_LEN-1:0]			buf_ex_src1_alu2;
+	reg [`DATA_LEN-1:0]			buf_ex_src2_alu2;
+	reg [`ADDR_LEN-1:0]			buf_pc_alu2;
+	reg [`DATA_LEN-1:0]			buf_imm_alu2;
+	reg [`RRF_SEL-1:0]			buf_rrftag_alu2;
+	reg							buf_dstval_alu2;
+	reg [`SRC_A_SEL_WIDTH-1:0]	buf_src_a_alu2;
+	reg [`SRC_B_SEL_WIDTH-1:0]	buf_src_b_alu2;
+	reg [`ALU_OP_WIDTH-1:0]		buf_alu_op_alu2;
+	reg [`SPECTAG_LEN-1:0]		buf_spectag_alu2;
+	reg							buf_specbit_alu2;
 
 	//LDST
-	wire [`DATA_LEN-1:0]        result_ldst;
-	wire 		       rrfwe_ldst;
-	wire 		       robwe_ldst;
-	wire [`RRF_SEL-1:0] 	       wrrftag_ldst;
-	wire 		       kill_speculative_ldst;
-	wire 		       busy_next_ldst;
+	wire [`DATA_LEN-1:0]		result_ldst;
+	wire						rrfwe_ldst;
+	wire						robwe_ldst;
+	wire [`RRF_SEL-1:0]			wrrftag_ldst;
+	wire						kill_speculative_ldst;
+	wire						busy_next_ldst;
 
-	//wire [`DATA_LEN-1:0]        dmem_data;
+	//wire [`DATA_LEN-1:0]		dmem_data;
 	/*
-	wire [`DATA_LEN-1:0]        dmem_wdata;
-	wire 		       dmem_we;
-	wire [`ADDR_LEN-1:0]        dmem_addr;
+	wire [`DATA_LEN-1:0]		dmem_wdata;
+	wire 				dmem_we;
+	wire [`ADDR_LEN-1:0]		dmem_addr;
 	*/
-	wire 		       sb_full;
-	wire 		       hitsb;
-	wire 		       memoccupy_ld;
-	wire [`ADDR_LEN-1:0]        ldaddr;
-	wire [`DATA_LEN-1:0]        lddatasb;
-	wire [`ADDR_LEN-1:0]        retaddr;
-	wire [`DATA_LEN-1:0]        storedata;
-	wire [`ADDR_LEN-1:0]        storeaddr;
-	wire 		       stfin;
+	wire					sb_full;
+	wire					hitsb;
+	wire					memoccupy_ld;
+	wire [`ADDR_LEN-1:0]	ldaddr;
+	wire [`DATA_LEN-1:0]	lddatasb;
+	wire [`ADDR_LEN-1:0]	retaddr;
+	wire [`DATA_LEN-1:0]	storedata;
+	wire [`ADDR_LEN-1:0]	storeaddr;
+	wire					stfin;
 
-	reg [`DATA_LEN-1:0] 	       buf_ex_src1_ldst;
-	reg [`DATA_LEN-1:0] 	       buf_ex_src2_ldst;
-	reg [`ADDR_LEN-1:0] 	       buf_pc_ldst;
-	reg [`DATA_LEN-1:0] 	       buf_imm_ldst;
-	reg [`RRF_SEL-1:0] 	       buf_rrftag_ldst;
-	reg 			       buf_dstval_ldst;
-	reg [`SPECTAG_LEN-1:0]      buf_spectag_ldst;
-	reg 			       buf_specbit_ldst;
+	reg [`DATA_LEN-1:0]		buf_ex_src1_ldst;
+	reg [`DATA_LEN-1:0]		buf_ex_src2_ldst;
+	reg [`ADDR_LEN-1:0]		buf_pc_ldst;
+	reg [`DATA_LEN-1:0]		buf_imm_ldst;
+	reg [`RRF_SEL-1:0]		buf_rrftag_ldst;
+	reg						buf_dstval_ldst;
+	reg [`SPECTAG_LEN-1:0]	buf_spectag_ldst;
+	reg						buf_specbit_ldst;
 
 	//MUL
-	wire [`DATA_LEN-1:0]        result_mul;
-	wire 		       rrfwe_mul;
-	wire 		       robwe_mul;
-	wire 		       kill_speculative_mul;
+	wire [`DATA_LEN-1:0]	result_mul;
+	wire					rrfwe_mul;
+	wire					robwe_mul;
+	wire					kill_speculative_mul;
 
-	reg [`DATA_LEN-1:0] 	       buf_ex_src1_mul;
-	reg [`DATA_LEN-1:0] 	       buf_ex_src2_mul;
-	reg [`ADDR_LEN-1:0] 	       buf_pc_mul;
-	reg [`RRF_SEL-1:0] 	       buf_rrftag_mul;
-	reg 			       buf_dstval_mul;
-	reg [`SPECTAG_LEN-1:0]      buf_spectag_mul;
-	reg 			       buf_specbit_mul;
-	reg 			       buf_src1_signed_mul;
-	reg 			       buf_src2_signed_mul;
-	reg 			       buf_sel_lohi_mul;
+	reg [`DATA_LEN-1:0]	buf_ex_src1_mul;
+	reg [`DATA_LEN-1:0]	buf_ex_src2_mul;
+	reg [`ADDR_LEN-1:0]	buf_pc_mul;
+	reg [`RRF_SEL-1:0]	buf_rrftag_mul;
+	reg					buf_dstval_mul;
+	reg [`SPECTAG_LEN-1:0]	buf_spectag_mul;
+	reg					buf_specbit_mul;
+	reg					buf_src1_signed_mul;
+	reg					buf_src2_signed_mul;
+	reg					buf_sel_lohi_mul;
 
 	//BRANCH
-	wire 		       prmiss;
-	wire 		       prsuccess;
-	wire [`ADDR_LEN-1:0]        jmpaddr;
-	wire [`ADDR_LEN-1:0]        jmpaddr_taken;
-	wire 		       brcond;
-	wire [`SPECTAG_LEN-1:0]     tagregfix;
+	wire					prmiss;
+	wire					prsuccess;
+	wire [`ADDR_LEN-1:0]	jmpaddr;
+	wire [`ADDR_LEN-1:0]	jmpaddr_taken;
+	wire					brcond;
+	wire [`SPECTAG_LEN-1:0]	tagregfix;
 
-	wire [`DATA_LEN-1:0]        result_branch;
-	wire 		       rrfwe_branch;
-	wire 		       robwe_branch;
+	wire [`DATA_LEN-1:0]	result_branch;
+	wire					rrfwe_branch;
+	wire					robwe_branch;
 
-	reg [`DATA_LEN-1:0] 	       buf_ex_src1_branch;
-	reg [`DATA_LEN-1:0] 	       buf_ex_src2_branch;
-	reg [`ADDR_LEN-1:0] 	       buf_pc_branch;
-	reg [`DATA_LEN-1:0] 	       buf_imm_branch;
-	reg [`RRF_SEL-1:0] 	       buf_rrftag_branch;
-	reg 			       buf_dstval_branch;
-	reg [`ALU_OP_WIDTH-1:0]     buf_alu_op_branch;
-	reg [`SPECTAG_LEN-1:0]      buf_spectag_branch;
-	reg 			       buf_specbit_branch;
-	reg [`ADDR_LEN-1:0] 	       buf_praddr_branch;
-	reg [6:0] 		       buf_opcode_branch;
+	reg [`DATA_LEN-1:0]		buf_ex_src1_branch;
+	reg [`DATA_LEN-1:0]		buf_ex_src2_branch;
+	reg [`ADDR_LEN-1:0]		buf_pc_branch;
+	reg [`DATA_LEN-1:0]		buf_imm_branch;
+	reg [`RRF_SEL-1:0]		buf_rrftag_branch;
+	reg						buf_dstval_branch;
+	reg [`ALU_OP_WIDTH-1:0]	buf_alu_op_branch;
+	reg [`SPECTAG_LEN-1:0]	buf_spectag_branch;
+	reg						buf_specbit_branch;
+	reg [`ADDR_LEN-1:0]		buf_praddr_branch;
+	reg [6:0]				buf_opcode_branch;
 
 	//C1
 	wire [`DATA_LEN-1:0]	result_C1;
@@ -540,68 +540,68 @@ module pipeline(
 	wire					robwe_C1;
 	wire					kill_speculative_C1;
 
-	reg [`DATA_LEN-1:0]		buf_ex_src1_C1;
-	reg [`DATA_LEN-1:0]		buf_ex_src2_C1;
-	reg [`DATA_LEN-1:0]		buf_imm_C1;
-	reg [`RRF_SEL-1:0]		buf_rrftag_C1;
-	reg						buf_dstval_C1;
-	reg [`SRC_A_SEL_WIDTH-1:0]  buf_src_a_C1;
-	reg [`SRC_B_SEL_WIDTH-1:0]  buf_src_b_C1;
-	reg [`FUNCT7_WIDTH-1:0]  buf_funct7_C1;
-	reg [`FUNCT3_WIDTH-1-1:0]  buf_funct3_C1;
-	reg [`SPECTAG_LEN-1:0]	buf_spectag_C1;
-	reg						buf_specbit_C1;
+	reg [`DATA_LEN-1:0]			buf_ex_src1_C1;
+	reg [`DATA_LEN-1:0]			buf_ex_src2_C1;
+	reg [`DATA_LEN-1:0]			buf_imm_C1;
+	reg [`RRF_SEL-1:0]			buf_rrftag_C1;
+	reg							buf_dstval_C1;
+	reg [`SRC_A_SEL_WIDTH-1:0]	buf_src_a_C1;
+	reg [`SRC_B_SEL_WIDTH-1:0]	buf_src_b_C1;
+	reg [`FUNCT7_WIDTH-1:0]		buf_funct7_C1;
+	reg [`FUNCT3_WIDTH-1-1:0]	buf_funct3_C1;
+	reg [`SPECTAG_LEN-1:0]		buf_spectag_C1;
+	reg							buf_specbit_C1;
 
 	//C2
-	wire [`DATA_LEN-1:0]	result_C2;
-	wire					rrfwe_C2;
-	wire					robwe_C2;
-	wire					kill_speculative_C2;
+	wire [`DATA_LEN-1:0]		result_C2;
+	wire						rrfwe_C2;
+	wire						robwe_C2;
+	wire						kill_speculative_C2;
 
-	reg [`DATA_LEN-1:0]		buf_ex_src1_C2;
-	reg [`DATA_LEN-1:0]		buf_ex_src2_C2;
-	reg [`DATA_LEN-1:0]		buf_imm_C2;
-	reg [`RRF_SEL-1:0]		buf_rrftag_C2;
-	reg						buf_dstval_C2;
-	reg [`SRC_A_SEL_WIDTH-1:0]  buf_src_a_C2;
-	reg [`SRC_B_SEL_WIDTH-1:0]  buf_src_b_C2;
-	reg [`FUNCT7_WIDTH-1:0]  buf_funct7_C2;
-	reg [`FUNCT3_WIDTH-1-1:0]  buf_funct3_C2;
-	reg [`SPECTAG_LEN-1:0]	buf_spectag_C2;
-	reg						buf_specbit_C2;
+	reg [`DATA_LEN-1:0]			buf_ex_src1_C2;
+	reg [`DATA_LEN-1:0]			buf_ex_src2_C2;
+	reg [`DATA_LEN-1:0]			buf_imm_C2;
+	reg [`RRF_SEL-1:0]			buf_rrftag_C2;
+	reg							buf_dstval_C2;
+	reg [`SRC_A_SEL_WIDTH-1:0]	buf_src_a_C2;
+	reg [`SRC_B_SEL_WIDTH-1:0]	buf_src_b_C2;
+	reg [`FUNCT7_WIDTH-1:0]		buf_funct7_C2;
+	reg [`FUNCT3_WIDTH-1-1:0]	buf_funct3_C2;
+	reg [`SPECTAG_LEN-1:0]		buf_spectag_C2;
+	reg							buf_specbit_C2;
 
 
 	//miss prediction fix table
-	wire [`SPECTAG_LEN-1:0] mpft_valid;
-	wire [`SPECTAG_LEN-1:0] spectagfix;
+	wire [`SPECTAG_LEN-1:0]	mpft_valid;
+	wire [`SPECTAG_LEN-1:0]	spectagfix;
 
 	//COM
-	wire [`RRF_SEL-1:0] 	   comptr;
-	wire [`RRF_SEL-1:0] 	   comptr2;
-	wire [1:0] 		   comnum;
-	wire 		   stcommit;
-	wire 		   arfwe1;
-	wire 		   arfwe2;
-	wire [`REG_SEL-1:0] 	   dstarf1;
-	wire [`REG_SEL-1:0] 	   dstarf2;
-	wire [`ADDR_LEN-1:0]    pc_combranch;
-	wire [`GSH_BHR_LEN-1:0] bhr_combranch;
-	wire 		   brcond_combranch;
-	wire 		   combranch;
-	wire [`ADDR_LEN-1:0]    jmpaddr_combranch;
+	wire [`RRF_SEL-1:0]	comptr;
+	wire [`RRF_SEL-1:0]	comptr2;
+	wire [1:0]	comnum;
+	wire					stcommit;
+	wire					arfwe1;
+	wire					arfwe2;
+	wire [`REG_SEL-1:0]	dstarf1;
+	wire [`REG_SEL-1:0]	dstarf2;
+	wire [`ADDR_LEN-1:0]	pc_combranch;
+	wire [`GSH_BHR_LEN-1:0]	bhr_combranch;
+	wire					brcond_combranch;
+	wire					combranch;
+	wire [`ADDR_LEN-1:0]	jmpaddr_combranch;
 
 	//IF Stage********************************************************
-	//   assign stall_IF = stall_ID;
-	//   assign kill_IF = prmiss;
+	//	assign stall_IF = stall_ID;
+	//	assign kill_IF = prmiss;
 	assign stall_IF = stall_ID | stall_DP;
-	assign kill_IF = prmiss;
+	assign kill_IF	= prmiss;
 
-	always @ (posedge clk) begin
-		if (reset) begin
+	always @(posedge clk) begin
+		if(reset) begin
 			pc <= `ENTRY_POINT;
-		end else if (prmiss) begin
+		end else if(prmiss) begin
 			pc <= jmpaddr;
-		end else if (stall_IF) begin
+		end else if(stall_IF) begin
 			pc <= pc;
 		end else begin
 			pc <= npc;
@@ -629,40 +629,39 @@ module pipeline(
 		.prtag(buf_spectag_branch),
 		.bhr(bhr),
 		.spectagnow(tagreg),
-		.idata(idata)
-		);
+		.idata(idata));
 
-	always @ (posedge clk) begin
-		if (reset | kill_IF) begin
+	always @(posedge clk) begin
+		if(reset | kill_IF) begin
 			prcond_if <= 0;
-			npc_if <= 0;
-			pc_if <= 0;
-			inst1_if <= 0;
-			inst2_if <= 0;
-			inv1_if <= 1;
-			inv2_if <= 1;
-			bhr_if <= 0;
-		end else if (~stall_IF) begin
+			npc_if	<= 0;
+			pc_if		<= 0;
+			inst1_if	<= 0;
+			inst2_if	<= 0;
+			inv1_if	<= 1;
+			inv2_if	<= 1;
+			bhr_if	<= 0;
+		end else if(~stall_IF) begin
 			prcond_if <= prcond;
-			npc_if <= npc;
-			pc_if <= pc;
-			inst1_if <= inst1;
-			inst2_if <= inst2;
-			inv1_if <= 0;
-			inv2_if <= invalid2_pipe;
-			bhr_if <= bhr;
+			npc_if	<= npc;
+			pc_if		<= pc;
+			inst1_if	<= inst1;
+			inst2_if	<= inst2;
+			inv1_if	<= 0;
+			inv2_if	<= invalid2_pipe;
+			bhr_if	<= bhr;
 		end
-	end // always @ (posedge clk)
+	end // always @(posedge clk)
 
 	//ID Stage********************************************************
-	//   assign stall_ID = stall_DP | ~attachable | (prsuccess & (isbranch1 | isbranch2));
-	//   assign kill_ID = prmiss;
+	//	assign stall_ID = stall_DP | ~attachable |(prsuccess &(isbranch1 | isbranch2));
+	//	assign kill_ID = prmiss;
 	assign stall_ID = ~attachable | prsuccess;
-	assign kill_ID = (stall_ID & ~stall_DP) | prmiss;
+	assign kill_ID	=(stall_ID & ~stall_DP) | prmiss;
 
-	assign isbranch1 = (~inv1_if && (rs_ent_1 == `RS_ENT_BRANCH)) ?
+	assign isbranch1 =(~inv1_if &&(rs_ent_1 == `RS_ENT_BRANCH)) ?
 		1'b1 : 1'b0;
-	assign isbranch2 = (~inv2_if && (rs_ent_2 == `RS_ENT_BRANCH)) ?
+	assign isbranch2 =(~inv2_if &&(rs_ent_2 == `RS_ENT_BRANCH)) ?
 		1'b1 : 1'b0;
 	assign branchvalid1 = isbranch1 & prcond_if;
 	assign branchvalid2 = isbranch2 & ~branchvalid1;
@@ -681,8 +680,7 @@ module pipeline(
 		.speculative1(spec1),
 		.speculative2(spec2),
 		.attachable(attachable),
-		.tagreg(tagreg)
-		);
+		.tagreg(tagreg));
 
 	decoder dec1(
 		.inst(inst1_if),
@@ -703,8 +701,7 @@ module pipeline(
 		.md_req_op(md_req_op_1),
 		.md_req_in_1_signed(md_req_in_1_signed_1),
 		.md_req_in_2_signed(md_req_in_2_signed_1),
-		.md_req_out_sel(md_req_out_sel_1)
-		);
+		.md_req_out_sel(md_req_out_sel_1));
 
 	decoder dec2(
 		.inst(inst2_if),
@@ -725,143 +722,142 @@ module pipeline(
 		.md_req_op(md_req_op_2),
 		.md_req_in_1_signed(md_req_in_1_signed_2),
 		.md_req_in_2_signed(md_req_in_2_signed_2),
-		.md_req_out_sel(md_req_out_sel_2)
-		);
+		.md_req_out_sel(md_req_out_sel_2));
 
-	always @ (posedge clk) begin
-		if (reset | kill_ID) begin
-			imm_type_1_id <= 0;
-			rs1_1_id <= 0;
-			rs2_1_id <= 0;
-			rd_1_id <= 0;
-			src_a_sel_1_id <= 0;
-			src_b_sel_1_id <= 0;
-			wr_reg_1_id <= 0;
-			uses_rs1_1_id <= 0;
-			uses_rs2_1_id <= 0;
+	always @(posedge clk) begin
+		if(reset | kill_ID) begin
+			imm_type_1_id			<= 0;
+			rs1_1_id				<= 0;
+			rs2_1_id				<= 0;
+			rd_1_id					<= 0;
+			src_a_sel_1_id			<= 0;
+			src_b_sel_1_id			<= 0;
+			wr_reg_1_id				<= 0;
+			uses_rs1_1_id			<= 0;
+			uses_rs2_1_id			<= 0;
 			illegal_instruction_1_id <= 0;
-			alu_op_1_id <= 0;
-			rs_ent_1_id <= 0;
-			dmem_size_1_id <= 0;
-			dmem_type_1_id <= 0;			  
-			md_req_op_1_id <= 0;
-			md_req_in_1_signed_1_id <= 0;
-			md_req_in_2_signed_1_id <= 0;
-			md_req_out_sel_1_id <= 0;
-			imm_type_2_id <= 0;
-			rs1_2_id <= 0;
-			rs2_2_id <= 0;
-			rd_2_id <= 0;
-			src_a_sel_2_id <= 0;
-			src_b_sel_2_id <= 0;
-			wr_reg_2_id <= 0;
-			uses_rs1_2_id <= 0;
-			uses_rs2_2_id <= 0;
+			alu_op_1_id				<= 0;
+			rs_ent_1_id				<= 0;
+			dmem_size_1_id			<= 0;
+			dmem_type_1_id			<= 0;
+			md_req_op_1_id			<= 0;
+			md_req_in_1_signed_1_id	<= 0;
+			md_req_in_2_signed_1_id	<= 0;
+			md_req_out_sel_1_id		<= 0;
+			imm_type_2_id			<= 0;
+			rs1_2_id				<= 0;
+			rs2_2_id				<= 0;
+			rd_2_id					<= 0;
+			src_a_sel_2_id			<= 0;
+			src_b_sel_2_id			<= 0;
+			wr_reg_2_id				<= 0;
+			uses_rs1_2_id			<= 0;
+			uses_rs2_2_id			<= 0;
 			illegal_instruction_2_id <= 0;
-			alu_op_2_id <= 0;
-			rs_ent_2_id <= 0;
-			dmem_size_2_id <= 0;
-			dmem_type_2_id <= 0;			  
-			md_req_op_2_id <= 0;
-			md_req_in_1_signed_2_id <= 0;
-			md_req_in_2_signed_2_id <= 0;
-			md_req_out_sel_2_id <= 0;
+			alu_op_2_id				<= 0;
+			rs_ent_2_id				<= 0;
+			dmem_size_2_id			<= 0;
+			dmem_type_2_id			<= 0;
+			md_req_op_2_id			<= 0;
+			md_req_in_1_signed_2_id	<= 0;
+			md_req_in_2_signed_2_id	<= 0;
+			md_req_out_sel_2_id		<= 0;
 
 			rs1_2_eq_dst1_id <= 0;
 			rs2_2_eq_dst1_id <= 0;
-			sptag1_id <= 0;
-			sptag2_id <= 0;
-			tagreg_id <= 0;
-			//	 spec1_id <= 0;
-			//	 spec2_id <= 0;
-			inst1_id <= 0;
-			inst2_id <= 0;
-			prcond1_id <= 0;
-			prcond2_id <= 0;
-			inv1_id <= 1;
-			inv2_id <= 1;
-			praddr1_id <= 0;
-			praddr2_id <= 0;
-			pc_id <= 0;
-			bhr_id <= 0;
-			isbranch1_id <= 0;
-			isbranch2_id <= 0;
-		end else if (~stall_DP) begin
-			imm_type_1_id <= imm_type_1;
-			rs1_1_id <= rs1_1;
-			rs2_1_id <= rs2_1;
-			rd_1_id <= rd_1;
-			src_a_sel_1_id <= src_a_sel_1;
-			src_b_sel_1_id <= src_b_sel_1;
-			wr_reg_1_id <= wr_reg_1;
-			uses_rs1_1_id <= uses_rs1_1;
-			uses_rs2_1_id <= uses_rs2_1;
+			sptag1_id		<= 0;
+			sptag2_id		<= 0;
+			tagreg_id		<= 0;
+			//		spec1_id <= 0;
+			//		spec2_id <= 0;
+			inst1_id		<= 0;
+			inst2_id		<= 0;
+			prcond1_id		<= 0;
+			prcond2_id		<= 0;
+			inv1_id			<= 1;
+			inv2_id			<= 1;
+			praddr1_id		<= 0;
+			praddr2_id		<= 0;
+			pc_id			<= 0;
+			bhr_id			<= 0;
+			isbranch1_id		<= 0;
+			isbranch2_id		<= 0;
+		end else if(~stall_DP) begin
+			imm_type_1_id			<= imm_type_1;
+			rs1_1_id				<= rs1_1;
+			rs2_1_id				<= rs2_1;
+			rd_1_id					<= rd_1;
+			src_a_sel_1_id			<= src_a_sel_1;
+			src_b_sel_1_id			<= src_b_sel_1;
+			wr_reg_1_id				<= wr_reg_1;
+			uses_rs1_1_id			<= uses_rs1_1;
+			uses_rs2_1_id			<= uses_rs2_1;
 			illegal_instruction_1_id <= illegal_instruction_1;
-			alu_op_1_id <= alu_op_1;
-			rs_ent_1_id <= inv1_if ? 0 : rs_ent_1;
-			dmem_size_1_id <= dmem_size_1;
-			dmem_type_1_id <= dmem_type_1;			  
-			md_req_op_1_id <= md_req_op_1;
-			md_req_in_1_signed_1_id <= md_req_in_1_signed_1;
-			md_req_in_2_signed_1_id <= md_req_in_2_signed_1;
-			md_req_out_sel_1_id <= md_req_out_sel_1;
-			imm_type_2_id <= imm_type_2;
-			rs1_2_id <= rs1_2;
-			rs2_2_id <= rs2_2;
-			rd_2_id <= rd_2;
-			src_a_sel_2_id <= src_a_sel_2;
-			src_b_sel_2_id <= src_b_sel_2;
-			wr_reg_2_id <= wr_reg_2;
-			uses_rs1_2_id <= uses_rs1_2;
-			uses_rs2_2_id <= uses_rs2_2;
+			alu_op_1_id				<= alu_op_1;
+			rs_ent_1_id				<= inv1_if ? 0 : rs_ent_1;
+			dmem_size_1_id			<= dmem_size_1;
+			dmem_type_1_id			<= dmem_type_1;
+			md_req_op_1_id			<= md_req_op_1;
+			md_req_in_1_signed_1_id	<= md_req_in_1_signed_1;
+			md_req_in_2_signed_1_id	<= md_req_in_2_signed_1;
+			md_req_out_sel_1_id		<= md_req_out_sel_1;
+			imm_type_2_id			<= imm_type_2;
+			rs1_2_id				<= rs1_2;
+			rs2_2_id				<= rs2_2;
+			rd_2_id					<= rd_2;
+			src_a_sel_2_id			<= src_a_sel_2;
+			src_b_sel_2_id			<= src_b_sel_2;
+			wr_reg_2_id				<= wr_reg_2;
+			uses_rs1_2_id			<= uses_rs1_2;
+			uses_rs2_2_id			<= uses_rs2_2;
 			illegal_instruction_2_id <= illegal_instruction_2;
-			alu_op_2_id <= alu_op_2;
-			rs_ent_2_id <= (inv2_if | (prcond_if & isbranch1)) ? 0 : rs_ent_2;
-			dmem_size_2_id <= dmem_size_2;
-			dmem_type_2_id <= dmem_type_2;
-			md_req_op_2_id <= md_req_op_2;
-			md_req_in_1_signed_2_id <= md_req_in_1_signed_2;
-			md_req_in_2_signed_2_id <= md_req_in_2_signed_2;
-			md_req_out_sel_2_id <= md_req_out_sel_2;
+			alu_op_2_id				<= alu_op_2;
+			rs_ent_2_id				<=(inv2_if |(prcond_if & isbranch1)) ? 0 : rs_ent_2;
+			dmem_size_2_id			<= dmem_size_2;
+			dmem_type_2_id			<= dmem_type_2;
+			md_req_op_2_id			<= md_req_op_2;
+			md_req_in_1_signed_2_id	<= md_req_in_1_signed_2;
+			md_req_in_2_signed_2_id	<= md_req_in_2_signed_2;
+			md_req_out_sel_2_id		<= md_req_out_sel_2;
 
-			rs1_2_eq_dst1_id <= (rs1_2 == rd_1 && wr_reg_1) ? 1'b1 : 1'b0;
-			rs2_2_eq_dst1_id <= (rs2_2 == rd_1 && wr_reg_1) ? 1'b1 : 1'b0;
-			sptag1_id <= sptag1;
-			sptag2_id <= sptag2;
-			tagreg_id <= tagreg;
-			//	 spec1_id <= spec1;
-			//	 spec2_id <= spec2;
-			inst1_id <= inst1_if;
-			inst2_id <= inst2_if;
-			prcond1_id <= prcond_if & isbranch1;
-			prcond2_id <= isbranch2 & prcond_if & ~isbranch1;
-			inv1_id <= inv1_if;
-			inv2_id <= inv2_if | (prcond_if & isbranch1);
+			rs1_2_eq_dst1_id <=(rs1_2 == rd_1 && wr_reg_1) ? 1'b1 : 1'b0;
+			rs2_2_eq_dst1_id <=(rs2_2 == rd_1 && wr_reg_1) ? 1'b1 : 1'b0;
+			sptag1_id		<= sptag1;
+			sptag2_id		<= sptag2;
+			tagreg_id		<= tagreg;
+			//		spec1_id <= spec1;
+			//		spec2_id <= spec2;
+			inst1_id		<= inst1_if;
+			inst2_id		<= inst2_if;
+			prcond1_id		<= prcond_if & isbranch1;
+			prcond2_id		<= isbranch2 & prcond_if & ~isbranch1;
+			inv1_id			<= inv1_if;
+			inv2_id			<= inv2_if |(prcond_if & isbranch1);
 			/*
-			praddr1_id <= prcond_if & isbranch1 ? npc_if : pc_if + 4;
-			praddr2_id <= prcond_if & ~isbranch1 & isbranch2 ?
+			praddr1_id		<= prcond_if & isbranch1 ? npc_if : pc_if + 4;
+			praddr2_id		<= prcond_if & ~isbranch1 & isbranch2 ?
 			npc_if : pc_if + 8;
 			*/
-			praddr1_id <= (prcond_if & isbranch1) ? npc_if : (pc_if + 4);
-			praddr2_id <= npc_if;
-			pc_id <= pc_if;
-			bhr_id <= bhr_if;
+				praddr1_id <=(prcond_if & isbranch1) ? npc_if :(pc_if + 4);
+			praddr2_id	<= npc_if;
+			pc_id		<= pc_if;
+			bhr_id		<= bhr_if;
 			isbranch1_id <= isbranch1;
 			isbranch2_id <= isbranch2;
 		end
 	end
 
 	//Invalidation of specbit when prsuccess(stall)
-	always @ (posedge clk) begin
-		if (reset | kill_ID) begin
+	always @(posedge clk) begin
+		if(reset | kill_ID) begin
 			spec1_id <= 0;
 			spec2_id <= 0;
-		end else if (prsuccess) begin
-			spec1_id <= (spec1_id && (buf_spectag_branch == sptag1_id)) ?
+		end else if(prsuccess) begin
+			spec1_id <=(spec1_id &&(buf_spectag_branch == sptag1_id)) ?
 				1'b0 : spec1_id;
-			spec2_id <= (spec2_id && (buf_spectag_branch == sptag2_id)) ?
+			spec2_id <=(spec2_id &&(buf_spectag_branch == sptag2_id)) ?
 				1'b0 : spec2_id;
-		end else if (~stall_ID) begin
+		end else if(~stall_ID) begin
 			spec1_id <= spec1;
 			spec2_id <= spec2;
 		end
@@ -884,8 +880,7 @@ module pipeline(
 		.src_eq_dst1(1'b0),
 		.src_eq_0((rs1_1_id == 0) ? 1'b1 : 1'b0),
 		.src(opr1_1),
-		.rdy(rdy1_1)
-		);
+		.rdy(rdy1_1));
 
 	sourceoperand_manager sopm2_1(
 		.arfdata(adat2_1),
@@ -897,8 +892,7 @@ module pipeline(
 		.src_eq_dst1(1'b0),
 		.src_eq_0((rs2_1_id == 0) ? 1'b1 : 1'b0),
 		.src(opr2_1),
-		.rdy(rdy2_1)
-		);
+		.rdy(rdy2_1));
 
 	sourceoperand_manager sopm1_2(
 		.arfdata(adat1_2),
@@ -910,8 +904,7 @@ module pipeline(
 		.src_eq_dst1(rs1_2_eq_dst1_id),
 		.src_eq_0((rs1_2_id == 0) ? 1'b1 : 1'b0),
 		.src(opr1_2),
-		.rdy(rdy1_2)
-		);
+		.rdy(rdy1_2));
 
 	sourceoperand_manager sopm2_2(
 		.arfdata(adat2_2),
@@ -923,8 +916,7 @@ module pipeline(
 		.src_eq_dst1(rs2_2_eq_dst1_id),
 		.src_eq_0((rs2_2_id == 0) ? 1'b1 : 1'b0),
 		.src(opr2_2),
-		.rdy(rdy2_2)
-		);
+		.rdy(rdy2_2));
 
 
 	rrf_freelistmanager rrf_fl(
@@ -942,8 +934,7 @@ module pipeline(
 		.freenum(freenum),
 		.rrfptr(rrfptr),
 		.comptr(comptr),
-		.nextrrfcyc(nextrrfcyc)
-		);
+		.nextrrfcyc(nextrrfcyc));
 
 	arf aregfile(
 		.clk(clk),
@@ -985,15 +976,15 @@ module pipeline(
 		.prtag(buf_spectag_branch),
 		//		.mpft_valid1(mpft_valid1_id), //PRsuccess & stall Bug
 		//		.mpft_valid2(mpft_valid2_id)
-		.mpft_valid1(mpft_valid & 
+		.mpft_valid1(mpft_valid &						
 			(isbranch1_id ? ~sptag1_id : ~(`SPECTAG_LEN'b0)) &
-			(isbranch2_id ? ~sptag2_id : ~(`SPECTAG_LEN'b0))),
-		.mpft_valid2(mpft_valid & 
-			(isbranch2_id ? ~sptag2_id : ~(`SPECTAG_LEN'b0)))
-		);
+(isbranch2_id ? ~sptag2_id : ~(`SPECTAG_LEN'b0))),
+		.mpft_valid2(mpft_valid &						
+			(isbranch2_id ? ~sptag2_id : ~(`SPECTAG_LEN'b0)))	
+	);
 
-	assign	rrftagfix = buf_rrftag_branch + 1;
-	
+	assign rrftagfix = buf_rrftag_branch + 1;
+
 	rrf rregfile(
 		.clk(clk),
 		.reset(reset),
@@ -1016,12 +1007,12 @@ module pipeline(
 		.wrrfaddr1(buf_rrftag_alu1),
 		.wrrfaddr2(buf_rrftag_alu2),
 		.wrrfaddr3(wrrftag_ldst),
-		.wrrfaddr4(buf_rrftag_branch),      
+		.wrrfaddr4(buf_rrftag_branch),
 		.wrrfaddr5(buf_rrftag_mul),
-
+		
 		.wrrfaddr6(buf_rrftag_C1),
 		.wrrfaddr7(buf_rrftag_C2),
-
+		
 		.wrrfdata1(result_alu1),
 		.wrrfdata2(result_alu2),
 		.wrrfdata3(result_ldst),
@@ -1029,21 +1020,21 @@ module pipeline(
 		.wrrfdata5(result_mul),
 		.wrrfdata6(result_C1),
 		.wrrfdata7(result_C2),
-
+		
 		.wrrfen1(rrfwe_alu1),
 		.wrrfen2(rrfwe_alu2),
 		.wrrfen3(rrfwe_ldst),
 		.wrrfen4(rrfwe_branch),
 		.wrrfen5(rrfwe_mul),
-
+		
 		.wrrfen6(rrfwe_C1),
 		.wrrfen7(rrfwe_C2),
-
+		
 		.dpaddr1(dst1_renamed),
 		.dpaddr2(dst2_renamed),
 		.dpen1(~stall_DP & ~kill_DP & ~inv1_id), // hoge
-		.dpen2(~stall_DP & ~kill_DP & ~inv2_id)  // hoge
-		);
+		.dpen2(~stall_DP & ~kill_DP & ~inv2_id)	// hoge
+	);
 
 	src_manager srcmng1_1(
 		.opr(opr1_1),
@@ -1063,17 +1054,16 @@ module pipeline(
 		.exrslt5(result_mul),
 		.exdst5(buf_rrftag_mul),
 		.kill_spec5(kill_speculative_mul | ~robwe_mul),
-
+		
 		.exrslt6(result_C1),
 		.exdst6(buf_rrftag_C1),
 		.kill_spec6(kill_speculative_C1 | ~robwe_C1),
 		.exrslt7(result_C2),
 		.exdst7(buf_rrftag_C2),
 		.kill_spec7(kill_speculative_C2 | ~robwe_C2),
-
+		
 		.src(src1_1),
-		.resolved(resolved1_1)
-		);
+		.resolved(resolved1_1					));
 
 	src_manager srcmng2_1(
 		.opr(opr2_1),
@@ -1093,17 +1083,16 @@ module pipeline(
 		.exrslt5(result_mul),
 		.exdst5(buf_rrftag_mul),
 		.kill_spec5(kill_speculative_mul | ~robwe_mul),
-
+		
 		.exrslt6(result_C1),
 		.exdst6(buf_rrftag_C1),
 		.kill_spec6(kill_speculative_C1 | ~robwe_C1),
 		.exrslt7(result_C2),
 		.exdst7(buf_rrftag_C2),
 		.kill_spec7(kill_speculative_C2 | ~robwe_C2),
-
+		
 		.src(src2_1),
-		.resolved(resolved2_1)
-		);
+		.resolved(resolved2_1					));
 
 	src_manager srcmng1_2(
 		.opr(opr1_2),
@@ -1123,17 +1112,16 @@ module pipeline(
 		.exrslt5(result_mul),
 		.exdst5(buf_rrftag_mul),
 		.kill_spec5(kill_speculative_mul | ~robwe_mul),
-
+		
 		.exrslt6(result_C1),
 		.exdst6(buf_rrftag_C1),
 		.kill_spec6(kill_speculative_C1 | ~robwe_C1),
 		.exrslt7(result_C2),
 		.exdst7(buf_rrftag_C2),
 		.kill_spec7(kill_speculative_C2 | ~robwe_C2),
-
+		
 		.src(src1_2),
-		.resolved(resolved1_2)
-		);
+		.resolved(resolved1_2					));
 
 	src_manager srcmng2_2(
 		.opr(opr2_2),
@@ -1153,39 +1141,34 @@ module pipeline(
 		.exrslt5(result_mul),
 		.exdst5(buf_rrftag_mul),
 		.kill_spec5(kill_speculative_mul | ~robwe_mul),
-
+		
 		.exrslt6(result_C1),
 		.exdst6(buf_rrftag_C1),
 		.kill_spec6(kill_speculative_C1 | ~robwe_C1),
 		.exrslt7(result_C2),
 		.exdst7(buf_rrftag_C2),
 		.kill_spec7(kill_speculative_C2 | ~robwe_C2),
-
+		
 		.src(src2_2),
-		.resolved(resolved2_2)
-		);
+		.resolved(resolved2_2));
 
 	imm_gen immgen1(
 		.inst(inst1_id),
 		.imm_type(imm_type_1_id),
-		.imm(imm1)
-		);
+		.imm(imm1));
 
 	imm_gen immgen2(
 		.inst(inst2_id),
 		.imm_type(imm_type_2_id),
-		.imm(imm2)
-		);
+		.imm(imm2));
 
 	brimm_gen brimmgen1(
 		.inst(inst1_id),
-		.brimm(brimm1)
-		);
+		.brimm(brimm1));
 
 	brimm_gen brimmgen2(
 		.inst(inst2_id),
-		.brimm(brimm2)
-		);
+		.brimm(brimm2));
 
 	rs_requestgenerator rs_reqgen(
 		.rsent_1(rs_ent_1_id),
@@ -1207,89 +1190,80 @@ module pipeline(
 		.req_C1num(req_C1num),
 		.req1_C2(req1_C2),
 		.req2_C2(req2_C2),
-		.req_C2num(req_C2num)
-		);
+		.req_C2num(req_C2num));
 
 
 	//Reservation Station(with Allocate unit, Issue unit)
 	//lowest bit of allocent is the selector of RS_alu1/2
-	assign 		 rsalu1_we1 = ~allocent1_alu[0];
-	assign 		 rsalu1_we2 = req1_alu ? 
-		~allocent2_alu[0] : ~allocent1_alu[0];
-	assign 		 rsalu2_we1 = allocent1_alu[0];
-	assign 		 rsalu2_we2 = req1_alu ? 
-		allocent2_alu[0] : allocent1_alu[0];
+	assign rsalu1_we1 = ~allocent1_alu[0];
+	assign rsalu1_we2 = req1_alu ?
+		~allocent2_alu[0]	: ~allocent1_alu[0];
+	assign rsalu2_we1 = allocent1_alu[0];
+	assign rsalu2_we2 = req1_alu ?
+		allocent2_alu[0]	: allocent1_alu[0];
 
-	assign busyvec_alu = 
+	assign busyvec_alu =
 		{
-		busyvec_alu2[7],busyvec_alu1[7],busyvec_alu2[6],busyvec_alu1[6],
-		busyvec_alu2[5],busyvec_alu1[5],busyvec_alu2[4],busyvec_alu1[4],
-		busyvec_alu2[3],busyvec_alu1[3],busyvec_alu2[2],busyvec_alu1[2],
-		busyvec_alu2[1],busyvec_alu1[1],busyvec_alu2[0],busyvec_alu1[0]
+			busyvec_alu2[7],busyvec_alu1[7],busyvec_alu2[6],busyvec_alu1[6],
+			busyvec_alu2[5],busyvec_alu1[5],busyvec_alu2[4],busyvec_alu1[4],
+			busyvec_alu2[3],busyvec_alu1[3],busyvec_alu2[2],busyvec_alu1[2],
+			busyvec_alu2[1],busyvec_alu1[1],busyvec_alu2[0],busyvec_alu1[0]
 		};
 
-	assign ready_alu = 
+	assign ready_alu =
 		{
-		ready_alu2[7],ready_alu1[7],ready_alu2[6],ready_alu1[6],
-		ready_alu2[5],ready_alu1[5],ready_alu2[4],ready_alu1[4],
-		ready_alu2[3],ready_alu1[3],ready_alu2[2],ready_alu1[2],
-		ready_alu2[1],ready_alu1[1],ready_alu2[0],ready_alu1[0]
+			ready_alu2[7],ready_alu1[7],ready_alu2[6],ready_alu1[6],
+			ready_alu2[5],ready_alu1[5],ready_alu2[4],ready_alu1[4],
+			ready_alu2[3],ready_alu1[3],ready_alu2[2],ready_alu1[2],
+			ready_alu2[1],ready_alu1[1],ready_alu2[0],ready_alu1[0]
 		};
 
-	assign 		   issue_alu1 = ~prmiss & issuevalid_alu1;
-	assign 		   issue_alu2 = ~prmiss & issuevalid_alu2;
+	assign issue_alu1 = ~prmiss & issuevalid_alu1;
+	assign issue_alu2 = ~prmiss & issuevalid_alu2;
 
-	allocateunit #(2*`ALU_ENT_NUM, `ALU_ENT_SEL+1) alloc_alu(
+	allocateunit #(2*`ALU_ENT_NUM,`ALU_ENT_SEL+1) alloc_alu(
 		.busy(busyvec_alu), //RS_BUSY
-		//      .en1(),
-		//      .en2(),
+		//		.en1(),
+		//		.en2(),
 		.free_ent1(allocent1_alu),
 		.free_ent2(allocent2_alu),
 		.reqnum(req_alunum),
-		.allocatable(allocatable_alu)
-		);
+		.allocatable(allocatable_alu));
 
 	/*
 	prioenc #(2*`ALU_ENT_NUM, `ALU_ENT_SEL+1) issue_alu
-	(
+(
 	.in(~ready_alu),
 	.out(issueent_alu),
-	.en(issuevalid_alu)
-	);
+	.en(issuevalid_alu));
 	*/
 	/*
 	prioenc #(`ALU_ENT_NUM, `ALU_ENT_SEL) isunt_alu1(
 	.in(~ready_alu1),
 	.out(issueentidx_alu1),
-	.en(issuevalid_alu1)
-	);
+	.en(issuevalid_alu1));
 
 	prioenc #(`ALU_ENT_NUM, `ALU_ENT_SEL) isunt_alu2(
 	.in(~ready_alu2),
 	.out(issueentidx_alu2),
-	.en(issuevalid_alu2)
-	);
+	.en(issuevalid_alu2));
 	*/
 	assign issuevalid_alu1 = ~entval_alu1[`RRF_SEL+1];
 	assign issuevalid_alu2 = ~entval_alu2[`RRF_SEL+1];
 
-	oldest_finder8 isunt_alu1
-		(
+	oldest_finder8 isunt_alu1(
 		.entvec({`ALU_ENT_SEL'h7, `ALU_ENT_SEL'h6, `ALU_ENT_SEL'h5, `ALU_ENT_SEL'h4,
-		`ALU_ENT_SEL'h3, `ALU_ENT_SEL'h2, `ALU_ENT_SEL'h1, `ALU_ENT_SEL'h0}),
+				`ALU_ENT_SEL'h3, `ALU_ENT_SEL'h2, `ALU_ENT_SEL'h1, `ALU_ENT_SEL'h0}), 
 		.valvec(histvect1),
 		.oldent(issueent_alu1),
-		.oldval(entval_alu1)
-		);
+		.oldval(entval_alu1));
 
-	oldest_finder8 isunt_alu2
-		(
+	oldest_finder8 isunt_alu2(
 		.entvec({`ALU_ENT_SEL'h7, `ALU_ENT_SEL'h6, `ALU_ENT_SEL'h5, `ALU_ENT_SEL'h4,
-		`ALU_ENT_SEL'h3, `ALU_ENT_SEL'h2, `ALU_ENT_SEL'h1, `ALU_ENT_SEL'h0}),
+				`ALU_ENT_SEL'h3, `ALU_ENT_SEL'h2, `ALU_ENT_SEL'h1, `ALU_ENT_SEL'h0}), 
 		.valvec(histvect2),
 		.oldent(issueent_alu2),
-		.oldval(entval_alu2)
-		);
+		.oldval(entval_alu2));
 
 
 	rs_alu reserv_alu1(
@@ -1304,13 +1278,13 @@ module pipeline(
 		.histvect(histvect1),
 		.nextrrfcyc(nextrrfcyc),
 		//WriteSignal
-		.clearbusy(issue_alu1), //Issue 
+		.clearbusy(issue_alu1), //Issue
 		.issueaddr(issueent_alu1), //= raddr, clsbsyadr
 		.we1(~stall_DP & ~kill_DP & req1_alu & rsalu1_we1), //alloc1
 		.we2(~stall_DP & ~kill_DP & req2_alu & rsalu1_we2), //alloc2
 		.waddr1(allocent1_alu[`ALU_ENT_SEL:1]), //allocent1
-		.waddr2(req1_alu ? 
-		allocent2_alu[`ALU_ENT_SEL:1] : 
+		.waddr2(req1_alu ?									
+					allocent2_alu[`ALU_ENT_SEL:1]	:
 		allocent1_alu[`ALU_ENT_SEL:1]), //allocent2
 		//WriteSignal1
 		.wpc_1(pc_id),
@@ -1374,8 +1348,7 @@ module pipeline(
 		.kill_spec6(kill_speculative_C1 | ~robwe_C1),
 		.exrslt7(result_C2),
 		.exdst7(buf_rrftag_C2),
-		.kill_spec7(kill_speculative_C2 | ~robwe_C2)
-		);
+		.kill_spec7(kill_speculative_C2 | ~robwe_C2));
 
 	rs_alu reserv_alu2(
 		//System
@@ -1389,13 +1362,13 @@ module pipeline(
 		.histvect(histvect2),
 		.nextrrfcyc(nextrrfcyc),
 		//WriteSignal
-		.clearbusy(issue_alu2), //Issue 
+		.clearbusy(issue_alu2), //Issue
 		.issueaddr(issueent_alu2), //= raddr, clsbsyadr
 		.we1(~stall_DP & ~kill_DP & req1_alu & rsalu2_we1), //alloc1
 		.we2(~stall_DP & ~kill_DP & req2_alu & rsalu2_we2), //alloc2
 		.waddr1(allocent1_alu[`ALU_ENT_SEL:1]), //allocent1
-		.waddr2(req1_alu ? 
-		allocent2_alu[`ALU_ENT_SEL:1] : 
+		.waddr2(req1_alu ?									
+					allocent2_alu[`ALU_ENT_SEL:1] :
 		allocent1_alu[`ALU_ENT_SEL:1]), //allocent2
 		//WriteSignal1
 		.wpc_1(pc_id),
@@ -1459,14 +1432,13 @@ module pipeline(
 		.kill_spec6(kill_speculative_C1 | ~robwe_C1),
 		.exrslt7(result_C2),
 		.exdst7(buf_rrftag_C2),
-		.kill_spec7(kill_speculative_C2 | ~robwe_C2)
-		);
+		.kill_spec7(kill_speculative_C2 | ~robwe_C2		)	);
 
 
 	assign allocent2_ldst = allocent1_ldst + 1;
-	assign issue_ldst = ~prmiss & issuevalid_ldst;
+	assign issue_ldst		= ~prmiss & issuevalid_ldst;
 
-	alloc_issue_ino #(`LDST_ENT_SEL, `LDST_ENT_NUM) ai_ldst(
+	alloc_issue_ino #(`LDST_ENT_SEL,`LDST_ENT_NUM) ai_ldst(
 		.clk(clk),
 		.reset(reset),
 		.reqnum(req_ldstnum),
@@ -1480,8 +1452,7 @@ module pipeline(
 		.allocptr(allocent1_ldst),
 		.allocatable(allocatable_ldst),
 		.issueptr(issueent_ldst),
-		.issuevalid(issuevalid_ldst)
-		);
+		.issuevalid(issuevalid_ldst));
 
 	rs_ldst reserv_ldst(
 		//System
@@ -1494,13 +1465,13 @@ module pipeline(
 		.specfixtag(spectagfix),
 		.prbusyvec_next(prbusyvec_next_ldst),
 		//WriteSignal
-		.clearbusy(issue_ldst), //Issue 
+		.clearbusy(issue_ldst), //Issue
 		.issueaddr(issueent_ldst), //= raddr, clsbsyadr
 		.we1(~stall_DP & ~kill_DP & req1_ldst), //alloc1
 		.we2(~stall_DP & ~kill_DP & req2_ldst), //alloc2
 		.waddr1(allocent1_ldst), //allocent1
-		.waddr2(req1_ldst ? 
-		allocent2_ldst : allocent1_ldst), //allocent2
+		.waddr2(req1_ldst ?						
+						allocent2_ldst : allocent1_ldst), //allocent2
 		//WriteSignal1
 		.wpc_1(pc_id),
 		.wsrc1_1(src1_1),
@@ -1554,12 +1525,11 @@ module pipeline(
 		.kill_spec6(kill_speculative_C1 | ~robwe_C1),
 		.exrslt7(result_C2),
 		.exdst7(buf_rrftag_C2),
-		.kill_spec7(kill_speculative_C2 | ~robwe_C2)
-		);
+		.kill_spec7(kill_speculative_C2 | ~robwe_C2));
 
 
 	assign allocent2_branch = allocent1_branch + 1;
-	assign issue_branch = ~prmiss & issuevalid_branch;
+	assign issue_branch		= ~prmiss & issuevalid_branch;
 
 	alloc_issue_ino ai_branch(
 		.clk(clk),
@@ -1575,8 +1545,7 @@ module pipeline(
 		.allocptr(allocent1_branch),
 		.allocatable(allocatable_branch),
 		.issueptr(issueent_branch),
-		.issuevalid(issuevalid_branch)
-		);
+		.issuevalid(issuevalid_branch));
 
 	rs_branch reserv_branch(
 		//System
@@ -1589,13 +1558,13 @@ module pipeline(
 		.specfixtag(spectagfix),
 		.prbusyvec_next(prbusyvec_next_branch),
 		//WriteSignal
-		.clearbusy(issue_branch), //Issue 
+		.clearbusy(issue_branch), //Issue
 		.issueaddr(issueent_branch), //= raddr, clsbsyadr
 		.we1(~stall_DP & ~kill_DP & req1_branch), //alloc1
 		.we2(~stall_DP & ~kill_DP & req2_branch), //alloc2
 		.waddr1(allocent1_branch), //allocent1
-		.waddr2(req1_branch ? 
-		allocent2_branch : allocent1_branch), //allocent2
+		.waddr2(req1_branch ?						
+						allocent2_branch : allocent1_branch), //allocent2
 		//WriteSignal1
 		.wpc_1(pc_id),
 		.wsrc1_1(src1_1),
@@ -1664,29 +1633,26 @@ module pipeline(
 		.kill_spec6(kill_speculative_C1 | ~robwe_C1),
 		.exrslt7(result_C2),
 		.exdst7(buf_rrftag_C2),
-		.kill_spec7(kill_speculative_C2 | ~robwe_C2)
-		);
+		.kill_spec7(kill_speculative_C2 | ~robwe_C2));
 
 	assign issue_mul = ~prmiss & issuevalid_mul;
 
-	allocateunit #(`MUL_ENT_NUM, `MUL_ENT_SEL) alloc_mul(
+	allocateunit #(`MUL_ENT_NUM,`MUL_ENT_SEL) alloc_mul(
 		.busy(busyvec_mul), //RS_BUSY
-		//      .en1(),
-		//      .en2(),
+		//		.en1(),
+		//		.en2(),
 		.free_ent1(allocent1_mul),
 		.free_ent2(allocent2_mul),
 		.reqnum(req_mulnum),
-		.allocatable(allocatable_mul)
-		);
+		.allocatable(allocatable_mul));
 
-	prioenc #(`MUL_ENT_NUM, `MUL_ENT_SEL) isunt_mul(
+	prioenc #(`MUL_ENT_NUM,`MUL_ENT_SEL) isunt_mul(
 		.in(~ready_mul),
 		.out(issueent_mul),
-		.en(issuevalid_mul)
-		);
+		.en(issuevalid_mul));
 
 	rs_mul reserv_mul(
-	//System
+		//System
 		.clk(clk),
 		.reset(reset),
 		.busyvec(busyvec_mul),
@@ -1695,13 +1661,13 @@ module pipeline(
 		.prtag(buf_spectag_branch),
 		.specfixtag(spectagfix),
 		//WriteSignal
-		.clearbusy(issue_mul), //Issue 
+		.clearbusy(issue_mul), //Issue
 		.issueaddr(issueent_mul), //= raddr, clsbsyadr
 		.we1(~stall_DP & ~kill_DP & req1_mul), //alloc1
 		.we2(~stall_DP & ~kill_DP & req2_mul), //alloc2
 		.waddr1(allocent1_mul), //allocent1
-		.waddr2(req1_mul ? 
-		allocent2_mul : allocent1_mul), //allocent2
+		.waddr2(req1_mul ?							
+						allocent2_mul : allocent1_mul), //allocent2
 		//WriteSignal1
 		.wsrc1_1(src1_1),
 		.wsrc2_1(src2_1),
@@ -1758,27 +1724,24 @@ module pipeline(
 		.kill_spec6(kill_speculative_C1 | ~robwe_C1),
 		.exrslt7(result_C2),
 		.exdst7(buf_rrftag_C2),
-		.kill_spec7(kill_speculative_C2 | ~robwe_C2)
-		);
+		.kill_spec7(kill_speculative_C2 | ~robwe_C2));
 
 	//------------C1 Dispatch-------------------------------------
 	assign issue_C1 = ~prmiss & issuevalid_C1;
 
-	allocateunit #(`FPGA_ENT_NUM, `FPGA_ENT_SEL) alloc_C1(
+	allocateunit #(`FPGA_ENT_NUM,`FPGA_ENT_SEL) alloc_C1(
 		.busy(busyvec_C1), //RS_BUSY
-		//      .en1(),
-		//      .en2(),
+		//		.en1(),
+		//		.en2(),
 		.free_ent1(allocent1_C1),
 		.free_ent2(allocent2_C1),
 		.reqnum(req_C1num),
-		.allocatable(allocatable_C1)
-	);
+		.allocatable(allocatable_C1));
 
-	prioenc #(`FPGA_ENT_NUM, `FPGA_ENT_SEL) isunt_C1(
+	prioenc #(`FPGA_ENT_NUM,`FPGA_ENT_SEL) isunt_C1(
 		.in(~ready_C1),
 		.out(issueent_C1),
-		.en(issuevalid_C1)
-	);
+		.en(issuevalid_C1));
 
 	rs_FPGA reserv_C1(
 		//System
@@ -1790,13 +1753,13 @@ module pipeline(
 		.prtag(buf_spectag_branch),
 		.specfixtag(spectagfix),
 		//WriteSignal
-		.clearbusy(issue_C1), //Issue 
+		.clearbusy(issue_C1), //Issue
 		.issueaddr(issueent_C1), //= raddr, clsbsyadr
 		.we1(~stall_DP & ~kill_DP & req1_C1), //alloc1
 		.we2(~stall_DP & ~kill_DP & req2_C1), //alloc2
 		.waddr1(allocent1_C1), //allocent1
-		.waddr2(req1_C1 ? 
-		allocent2_C1 : allocent1_C1), //allocent2
+		.waddr2(req1_C1 ?							
+					allocent2_C1 : allocent1_C1), //allocent2
 		//WriteSignal1
 		.wsrc1_1(src1_1),
 		.wsrc2_1(src2_1),
@@ -1859,27 +1822,24 @@ module pipeline(
 		.kill_spec6(kill_speculative_C1 | ~robwe_C1),
 		.exrslt7(result_C2),
 		.exdst7(buf_rrftag_C2),
-		.kill_spec7(kill_speculative_C2 | ~robwe_C2)
-		);
-	
+		.kill_spec7(kill_speculative_C2 | ~robwe_C2));
+
 	//-----------------C2 Dispatch--------------------------------
 	assign issue_C2 = ~prmiss & issuevalid_C2;
 
-	allocateunit #(`FPGA_ENT_NUM, `FPGA_ENT_SEL) alloc_C2(
+	allocateunit #(`FPGA_ENT_NUM,`FPGA_ENT_SEL) alloc_C2(
 		.busy(busyvec_C2), //RS_BUSY
-		//      .en1(),
-		//      .en2(),
+		//		.en1(),
+		//		.en2(),
 		.free_ent1(allocent1_C2),
 		.free_ent2(allocent2_C2),
 		.reqnum(req_C2num),
-		.allocatable(allocatable_C2)
-	);
+		.allocatable(allocatable_C2));
 
-	prioenc #(`FPGA_ENT_NUM, `FPGA_ENT_SEL) isunt_C2(
+	prioenc #(`FPGA_ENT_NUM,`FPGA_ENT_SEL) isunt_C2(
 		.in(~ready_C2),
 		.out(issueent_C2),
-		.en(issuevalid_C2)
-	);
+		.en(issuevalid_C2));
 
 	rs_FPGA reserv_C2(
 		//System
@@ -1891,13 +1851,13 @@ module pipeline(
 		.prtag(buf_spectag_branch),
 		.specfixtag(spectagfix),
 		//WriteSignal
-		.clearbusy(issue_C2), //Issue 
+		.clearbusy(issue_C2), //Issue
 		.issueaddr(issueent_C2), //= raddr, clsbsyadr
 		.we1(~stall_DP & ~kill_DP & req1_C2), //alloc1
 		.we2(~stall_DP & ~kill_DP & req2_C2), //alloc2
 		.waddr1(allocent1_C2), //allocent1
-		.waddr2(req1_C2 ? 
-		allocent2_C2 : allocent1_C2), //allocent2
+		.waddr2(req1_C2 ?							
+					allocent2_C2 : allocent1_C2), //allocent2
 		//WriteSignal1
 		.wsrc1_1(src1_1),
 		.wsrc2_1(src2_1),
@@ -1960,34 +1920,33 @@ module pipeline(
 		.kill_spec6(kill_speculative_C1 | ~robwe_C1),
 		.exrslt7(result_C2),
 		.exdst7(buf_rrftag_C2),
-		.kill_spec7(kill_speculative_C2 | ~robwe_C2)
-		);
+		.kill_spec7(kill_speculative_C2 | ~robwe_C2));
 
 	//EX Stage********************************************************
 
-	always @ (posedge clk) begin
-		if (reset) begin
+	always @(posedge clk) begin
+		if(reset) begin
 			buf_ex_src1_alu1 <= 0;
 			buf_ex_src2_alu1 <= 0;
-			buf_pc_alu1 <= 0;
-			buf_imm_alu1 <= 0;
-			buf_rrftag_alu1 <= 0;
-			buf_dstval_alu1 <= 0;
-			buf_src_a_alu1 <= 0;
-			buf_src_b_alu1 <= 0;
-			buf_alu_op_alu1 <= 0;
+			buf_pc_alu1		<= 0;
+			buf_imm_alu1		<= 0;
+			buf_rrftag_alu1	<= 0;
+			buf_dstval_alu1	<= 0;
+			buf_src_a_alu1	<= 0;
+			buf_src_b_alu1	<= 0;
+			buf_alu_op_alu1	<= 0;
 			buf_spectag_alu1 <= 0;
 			buf_specbit_alu1 <= 0;
-		end else if (issue_alu1) begin
+		end else if(issue_alu1) begin
 			buf_ex_src1_alu1 <= ex_src1_alu1;
 			buf_ex_src2_alu1 <= ex_src2_alu1;
-			buf_pc_alu1 <= pc_alu1;
-			buf_imm_alu1 <= imm_alu1;
-			buf_rrftag_alu1 <= rrftag_alu1;
-			buf_dstval_alu1 <= dstval_alu1;
-			buf_src_a_alu1 <= src_a_alu1;
-			buf_src_b_alu1 <= src_b_alu1;
-			buf_alu_op_alu1 <= alu_op_alu1;
+			buf_pc_alu1		<= pc_alu1;
+			buf_imm_alu1		<= imm_alu1;
+			buf_rrftag_alu1	<= rrftag_alu1;
+			buf_dstval_alu1	<= dstval_alu1;
+			buf_src_a_alu1	<= src_a_alu1;
+			buf_src_b_alu1	<= src_b_alu1;
+			buf_alu_op_alu1	<= alu_op_alu1;
 			buf_spectag_alu1 <= spectag_alu1;
 			buf_specbit_alu1 <= specbit_alu1;
 		end
@@ -2012,32 +1971,31 @@ module pipeline(
 		.result(result_alu1),
 		.rrf_we(rrfwe_alu1),
 		.rob_we(robwe_alu1),
-		.kill_speculative(kill_speculative_alu1)
-		);
+		.kill_speculative(kill_speculative_alu1));
 
-	always @ (posedge clk) begin
-		if (reset) begin
+	always @(posedge clk) begin
+		if(reset) begin
 			buf_ex_src1_alu2 <= 0;
 			buf_ex_src2_alu2 <= 0;
-			buf_pc_alu2 <= 0;
-			buf_imm_alu2 <= 0;
-			buf_rrftag_alu2 <= 0;
-			buf_dstval_alu2 <= 0;
-			buf_src_a_alu2 <= 0;
-			buf_src_b_alu2 <= 0;
-			buf_alu_op_alu2 <= 0;
+			buf_pc_alu2		<= 0;
+			buf_imm_alu2		<= 0;
+			buf_rrftag_alu2	<= 0;
+			buf_dstval_alu2	<= 0;
+			buf_src_a_alu2	<= 0;
+			buf_src_b_alu2	<= 0;
+			buf_alu_op_alu2	<= 0;
 			buf_spectag_alu2 <= 0;
 			buf_specbit_alu2 <= 0;
-		end else if (issue_alu2) begin
+		end else if(issue_alu2) begin
 			buf_ex_src1_alu2 <= ex_src1_alu2;
 			buf_ex_src2_alu2 <= ex_src2_alu2;
-			buf_pc_alu2 <= pc_alu2;
-			buf_imm_alu2 <= imm_alu2;
-			buf_rrftag_alu2 <= rrftag_alu2;
-			buf_dstval_alu2 <= dstval_alu2;
-			buf_src_a_alu2 <= src_a_alu2;
-			buf_src_b_alu2 <= src_b_alu2;
-			buf_alu_op_alu2 <= alu_op_alu2;
+			buf_pc_alu2		<= pc_alu2;
+			buf_imm_alu2		<= imm_alu2;
+			buf_rrftag_alu2	<= rrftag_alu2;
+			buf_dstval_alu2	<= dstval_alu2;
+			buf_src_a_alu2	<= src_a_alu2;
+			buf_src_b_alu2	<= src_b_alu2;
+			buf_alu_op_alu2	<= alu_op_alu2;
 			buf_spectag_alu2 <= spectag_alu2;
 			buf_specbit_alu2 <= specbit_alu2;
 		end
@@ -2062,34 +2020,33 @@ module pipeline(
 		.result(result_alu2),
 		.rrf_we(rrfwe_alu2),
 		.rob_we(robwe_alu2),
-		.kill_speculative(kill_speculative_alu2)
-		);
+		.kill_speculative(kill_speculative_alu2));
 
-	always @ (posedge clk) begin
-		if (reset) begin
+	always @(posedge clk) begin
+		if(reset) begin
 			buf_ex_src1_ldst <= 0;
 			buf_ex_src2_ldst <= 0;
-			buf_pc_ldst <= 0;
-			buf_imm_ldst <= 0;
-			buf_rrftag_ldst <= 0;
-			buf_dstval_ldst <= 0;
+			buf_pc_ldst		<= 0;
+			buf_imm_ldst		<= 0;
+			buf_rrftag_ldst	<= 0;
+			buf_dstval_ldst	<= 0;
 			buf_spectag_ldst <= 0;
 			buf_specbit_ldst <= 0;
-		end else if (issue_ldst) begin
+		end else if(issue_ldst) begin
 			buf_ex_src1_ldst <= ex_src1_ldst;
 			buf_ex_src2_ldst <= ex_src2_ldst;
-			buf_pc_ldst <= pc_ldst;
-			buf_imm_ldst <= imm_ldst;
-			buf_rrftag_ldst <= rrftag_ldst;
-			buf_dstval_ldst <= dstval_ldst;
+			buf_pc_ldst		<= pc_ldst;
+			buf_imm_ldst		<= imm_ldst;
+			buf_rrftag_ldst	<= rrftag_ldst;
+			buf_dstval_ldst	<= dstval_ldst;
 			buf_spectag_ldst <= spectag_ldst;
 			buf_specbit_ldst <= specbit_ldst;
 		end
-	end // always @ (posedge clk)
+	end // always @(posedge clk)
 
-	assign dmem_addr = (memoccupy_ld) ? ldaddr : retaddr;
+	assign dmem_addr =(memoccupy_ld) ? ldaddr : retaddr;
 
-/*   
+/*
 dmem datamemory(
 .clk(clk),
 .addr({2'b0, dmem_addr[`ADDR_LEN-1:2]}),
@@ -2098,7 +2055,7 @@ dmem datamemory(
 .rdata(dmem_data)
 );
 */
-	storebuf sb	(
+	storebuf sb(
 		.clk(clk),
 		.reset(reset),
 		.prsuccess(prsuccess),
@@ -2118,8 +2075,7 @@ dmem datamemory(
 		.sb_full(sb_full),
 		.ldaddr(ldaddr),
 		.lddata(lddatasb),
-		.hit(hitsb)
-		);
+		.hit(hitsb));
 
 	exunit_ldst seiryu(
 		.clk(clk),
@@ -2149,36 +2105,35 @@ dmem datamemory(
 		.hitsb(hitsb),
 		.ldaddr(ldaddr),
 		.lddatasb(lddatasb),
-		.lddatamem(dmem_data)
-		);
+		.lddatamem(dmem_data));
 
-	always @ (posedge clk) begin
-		if (reset) begin
-			buf_ex_src1_mul <= 0;
-			buf_ex_src2_mul <= 0;
-			buf_pc_mul <= 0;
-			buf_rrftag_mul <= 0;
-			buf_dstval_mul <= 0;
-			buf_spectag_mul <= 0;
-			buf_specbit_mul <= 0;
+	always @(posedge clk) begin
+		if(reset) begin
+			buf_ex_src1_mul		<= 0;
+			buf_ex_src2_mul		<= 0;
+			buf_pc_mul			<= 0;
+			buf_rrftag_mul		<= 0;
+			buf_dstval_mul		<= 0;
+			buf_spectag_mul		<= 0;
+			buf_specbit_mul		<= 0;
 			buf_src1_signed_mul <= 0;
 			buf_src2_signed_mul <= 0;
-			buf_sel_lohi_mul <= 0;
-		end else if (issue_mul) begin
-			buf_ex_src1_mul <= ex_src1_mul;
-			buf_ex_src2_mul <= ex_src2_mul;
-			buf_pc_mul <= pc_mul;
-			buf_rrftag_mul <= rrftag_mul;
-			buf_dstval_mul <= dstval_mul;
-			buf_spectag_mul <= spectag_mul;
-			buf_specbit_mul <= specbit_mul;
+			buf_sel_lohi_mul	<= 0;
+		end else if(issue_mul) begin
+			buf_ex_src1_mul		<= ex_src1_mul;
+			buf_ex_src2_mul		<= ex_src2_mul;
+			buf_pc_mul			<= pc_mul;
+			buf_rrftag_mul		<= rrftag_mul;
+			buf_dstval_mul		<= dstval_mul;
+			buf_spectag_mul		<= spectag_mul;
+			buf_specbit_mul		<= specbit_mul;
 			buf_src1_signed_mul <= src1_signed_mul;
 			buf_src2_signed_mul <= src2_signed_mul;
-			buf_sel_lohi_mul <= sel_lohi_mul;
-			end
+			buf_sel_lohi_mul	<= sel_lohi_mul;
+		end
 	end
 
-	exunit_mul genbu (
+	exunit_mul genbu(
 		.clk(clk),
 		.reset(reset),
 		.ex_src1(buf_ex_src1_mul),
@@ -2195,35 +2150,34 @@ dmem datamemory(
 		.result(result_mul),
 		.rrf_we(rrfwe_mul),
 		.rob_we(robwe_mul),
-		.kill_speculative(kill_speculative_mul)
-		);
+		.kill_speculative(kill_speculative_mul));
 
 
-	always @ (posedge clk) begin
-		if (reset) begin
+	always @(posedge clk) begin
+		if(reset) begin
 			buf_ex_src1_branch <= 0;
 			buf_ex_src2_branch <= 0;
-			buf_pc_branch <= 0;
-			buf_imm_branch <= 0;
-			buf_rrftag_branch <= 0;
-			buf_dstval_branch <= 0;
-			buf_alu_op_branch <= 0;
+			buf_pc_branch		<= 0;
+			buf_imm_branch		<= 0;
+			buf_rrftag_branch	<= 0;
+			buf_dstval_branch	<= 0;
+			buf_alu_op_branch	<= 0;
 			buf_spectag_branch <= 0;
 			buf_specbit_branch <= 0;
-			buf_praddr_branch <= 0;
-			buf_opcode_branch <= 0;
-		end else if (issue_branch) begin
+			buf_praddr_branch	<= 0;
+			buf_opcode_branch	<= 0;
+		end else if(issue_branch) begin
 			buf_ex_src1_branch <= ex_src1_branch;
 			buf_ex_src2_branch <= ex_src2_branch;
-			buf_pc_branch <= pc_branch;
-			buf_imm_branch <= imm_branch;
-			buf_rrftag_branch <= rrftag_branch;
-			buf_dstval_branch <= dstval_branch;
-			buf_alu_op_branch <= alu_op_branch;
+			buf_pc_branch		<= pc_branch;
+			buf_imm_branch		<= imm_branch;
+			buf_rrftag_branch	<= rrftag_branch;
+			buf_dstval_branch	<= dstval_branch;
+			buf_alu_op_branch	<= alu_op_branch;
 			buf_spectag_branch <= spectag_branch;
 			buf_specbit_branch <= specbit_branch;
-			buf_praddr_branch <= praddr_branch;
-			buf_opcode_branch <= opcode_branch;
+			buf_praddr_branch	<= praddr_branch;
+			buf_opcode_branch	<= opcode_branch;
 		end
 	end
 
@@ -2249,39 +2203,38 @@ dmem datamemory(
 		.jmpaddr(jmpaddr),
 		.jmpaddr_taken(jmpaddr_taken),
 		.brcond(brcond),
-		.tagregfix(tagregfix)
-		);
+		.tagregfix(tagregfix));
 
 	//-------------------C1--------------------------------------------
-	always @ (posedge clk) begin
-		if (reset) begin
+	always @(posedge clk) begin
+		if(reset) begin
 			buf_ex_src1_C1 <= 0;
 			buf_ex_src2_C1 <= 0;
-			buf_imm_C1 <= 0;
-			buf_rrftag_C1 <= 0;
-			buf_dstval_C1 <= 0;
-			buf_src_a_C1 <= 0;
-			buf_src_b_C1 <= 0;
-			buf_funct7_C1 <= 0;
-			buf_funct3_C1 <= 0;
+			buf_imm_C1		<= 0;
+			buf_rrftag_C1	<= 0;
+			buf_dstval_C1	<= 0;
+			buf_src_a_C1	<= 0;
+			buf_src_b_C1	<= 0;
+			buf_funct7_C1	<= 0;
+			buf_funct3_C1	<= 0;
 			buf_spectag_C1 <= 0;
 			buf_specbit_C1 <= 0;
-		end else if (issue_C1) begin
+		end else if(issue_C1) begin
 			buf_ex_src1_C1 <= ex_src1_C1;
 			buf_ex_src2_C1 <= ex_src2_C1;
-			buf_imm_C1 <= imm_C1;
-			buf_rrftag_C1 <= rrftag_C1;
-			buf_dstval_C1 <= dstval_C1;
-			buf_src_a_C1 <= src_a_C1;
-			buf_src_b_C1 <= src_b_C1;
-			buf_funct7_C1 <= funct7_C1;
-			buf_funct3_C1 <= funct3_C1;
+			buf_imm_C1		<= imm_C1;
+			buf_rrftag_C1	<= rrftag_C1;
+			buf_dstval_C1	<= dstval_C1;
+			buf_src_a_C1	<= src_a_C1;
+			buf_src_b_C1	<= src_b_C1;
+			buf_funct7_C1	<= funct7_C1;
+			buf_funct3_C1	<= funct3_C1;
 			buf_spectag_C1 <= spectag_C1;
 			buf_specbit_C1 <= specbit_C1;
 		end
 	end
 
-	exunit_custom Lee (
+	exunit_custom Lee(
 		.clk(clk),
 		.reset(reset),
 		.ex_src1(buf_ex_src1_C1),
@@ -2300,40 +2253,39 @@ dmem datamemory(
 		.result(result_C1),
 		.rrf_we(rrfwe_C1),
 		.rob_we(robwe_C1),
-		.kill_speculative(kill_speculative_C1)
-		);
+		.kill_speculative(kill_speculative_C1));
 
 
 	//-------------------C2--------------------------------------------
-	always @ (posedge clk) begin
-		if (reset) begin
+	always @(posedge clk) begin
+		if(reset) begin
 			buf_ex_src1_C2 <= 0;
 			buf_ex_src2_C2 <= 0;
-			buf_imm_C2 <= 0;
-			buf_rrftag_C2 <= 0;
-			buf_dstval_C2 <= 0;
-			buf_src_a_C2 <= 0;
-			buf_src_b_C2 <= 0;
-			buf_funct7_C2 <= 0;
-			buf_funct3_C2 <= 0;
+			buf_imm_C2		<= 0;
+			buf_rrftag_C2	<= 0;
+			buf_dstval_C2	<= 0;
+			buf_src_a_C2	<= 0;
+			buf_src_b_C2	<= 0;
+			buf_funct7_C2	<= 0;
+			buf_funct3_C2	<= 0;
 			buf_spectag_C2 <= 0;
 			buf_specbit_C2 <= 0;
-		end else if (issue_C2) begin
+		end else if(issue_C2) begin
 			buf_ex_src1_C2 <= ex_src1_C2;
 			buf_ex_src2_C2 <= ex_src2_C2;
-			buf_imm_C2 <= imm_C2;
-			buf_rrftag_C2 <= rrftag_C2;
-			buf_dstval_C2 <= dstval_C2;
-			buf_src_a_C2 <= src_a_C2;
-			buf_src_b_C2 <= src_b_C2;
-			buf_funct7_C2 <= funct7_C2;
-			buf_funct3_C2 <= funct3_C2;
+			buf_imm_C2		<= imm_C2;
+			buf_rrftag_C2	<= rrftag_C2;
+			buf_dstval_C2	<= dstval_C2;
+			buf_src_a_C2	<= src_a_C2;
+			buf_src_b_C2	<= src_b_C2;
+			buf_funct7_C2	<= funct7_C2;
+			buf_funct3_C2	<= funct3_C2;
 			buf_spectag_C2 <= spectag_C2;
 			buf_specbit_C2 <= specbit_C2;
 		end
 	end
 
-	exunit_custom Tommy (
+	exunit_custom Tommy(
 		.clk(clk),
 		.reset(reset),
 		.ex_src1(buf_ex_src1_C2),
@@ -2352,8 +2304,7 @@ dmem datamemory(
 		.result(result_C2),
 		.rrf_we(rrfwe_C2),
 		.rob_we(robwe_C2),
-		.kill_speculative(kill_speculative_C2)
-		);
+		.kill_speculative(kill_speculative_C2));
 
 
 	miss_prediction_fix_table mpft(
@@ -2368,8 +2319,7 @@ dmem datamemory(
 		.setspec1_tag(sptag1),
 		.setspec1_en(isbranch1 & ~stall_ID & ~stall_DP),
 		.setspec2_tag(sptag2),
-		.setspec2_en(branchvalid2 & ~stall_ID & ~stall_DP)
-		);
+		.setspec2_en(branchvalid2 & ~stall_ID & ~stall_DP));
 
 //COM Stage*******************************************************
 	reorderbuf rob(
@@ -2378,7 +2328,7 @@ dmem datamemory(
 		.dp1(~stall_DP & ~kill_DP & ~inv1_id),
 		.dp1_addr(dst1_renamed),
 		.pc_dp1(pc_id),
-		.storebit_dp1(inst1_id[6:0] == `RV32_STORE ? 1'b1 : 1'b0),
+		.storebit_dp1(inst1_id[6:0]	== `RV32_STORE ? 1'b1 : 1'b0),
 		.dstvalid_dp1(wr_reg_1_id),
 		.dst_dp1(rd_1_id),
 		.bhr_dp1(bhr_id),
@@ -2386,7 +2336,7 @@ dmem datamemory(
 		.dp2(~stall_DP & ~kill_DP & ~inv2_id),
 		.dp2_addr(dst2_renamed),
 		.pc_dp2(pc_id + 4),
-		.storebit_dp2(inst2_id[6:0] == `RV32_STORE ? 1'b1 : 1'b0),
+		.storebit_dp2(inst2_id[6:0]	== `RV32_STORE ? 1'b1 : 1'b0),
 		.dstvalid_dp2(wr_reg_2_id),
 		.dst_dp2(rd_2_id),
 		.bhr_dp2(bhr_id),
@@ -2407,7 +2357,7 @@ dmem datamemory(
 		.exfin_C1_addr(buf_rrftag_C1),
 		.exfin_C2(robwe_C2),
 		.exfin_C2_addr(buf_rrftag_C2),
-
+		
 		.comptr(comptr),
 		.comptr2(comptr2),
 		.comnum(comnum),
@@ -2423,9 +2373,8 @@ dmem datamemory(
 		.combranch(combranch),
 		.dispatchptr(rrfptr),
 		.rrf_freenum(freenum),
-		.prmiss(prmiss)
-		);
-	
+		.prmiss(prmiss));
+
 endmodule // pipeline
 
 `default_nettype wire

@@ -3,44 +3,41 @@
 `include "alu_ops.vh"
 
 `default_nettype none
-module decoder(
-	input wire [31:0] 		  inst,
-	output reg [`IMM_TYPE_WIDTH-1:0]   imm_type,
-	output wire [`REG_SEL-1:0] 	  rs1,
-	output wire [`REG_SEL-1:0] 	  rs2,
-	output wire [`REG_SEL-1:0] 	  rd,
-	output reg [`SRC_A_SEL_WIDTH-1:0]  src_a_sel,
-	output reg [`SRC_B_SEL_WIDTH-1:0]  src_b_sel,
-	output reg 			  wr_reg,
+module decoder (
+	input  wire [		  31:0] inst,
+	output reg  [`IMM_TYPE_WIDTH-1:0] imm_type,
+	output wire [ `REG_SEL-1:0] rs1,
+	output wire [ `REG_SEL-1:0] rs2,
+	output wire [ `REG_SEL-1:0] rd,
+	output reg  [`SRC_A_SEL_WIDTH-1:0] src_a_sel,
+	output reg  [`SRC_B_SEL_WIDTH-1:0] src_b_sel,
+	output reg						  wr_reg,
+	output reg						  uses_rs1,
+	output reg						  uses_rs2,
+	output reg						  illegal_instruction,
+	output reg  [`ALU_OP_WIDTH-1:0] alu_op,
+	output reg  [`RS_ENT_SEL-1:0] rs_ent,
+	//			output reg 			  dmem_use,
+	//			output reg 			  dmem_write,
+	output wire [		  2:0] dmem_size,
+	output wire [`MEM_TYPE_WIDTH-1:0] dmem_type,
+	output reg  [`MD_OP_WIDTH-1:0] md_req_op,
+	output reg						  md_req_in_1_signed,
+	output reg						  md_req_in_2_signed,
+	output reg  [`MD_OUT_SEL_WIDTH-1:0] md_req_out_sel,
+	output reg  [`FUNCT7_WIDTH-1:0] funct7,
+	output reg  [`FUNCT3_WIDTH-1:0] funct3
+);
 
-	output reg 			  uses_rs1,
-	output reg 			  uses_rs2,
-	output reg 			  illegal_instruction,
-	output reg [`ALU_OP_WIDTH-1:0] 	  alu_op,
-	output reg [`RS_ENT_SEL-1:0] 	  rs_ent,
-	//	       output reg 			  dmem_use,
-	//	       output reg 			  dmem_write,
-	output wire [2:0] 		  dmem_size,
-	output wire [`MEM_TYPE_WIDTH-1:0]  dmem_type, 
-	output reg [`MD_OP_WIDTH-1:0] 	  md_req_op,
-	output reg 			  md_req_in_1_signed,
-	output reg 			  md_req_in_2_signed,
-	output reg [`MD_OUT_SEL_WIDTH-1:0] md_req_out_sel,
-	
-	output reg [`FUNCT7_WIDTH-1:0]	funct7,
-	output reg [`FUNCT3_WIDTH-1:0]	funct3
+	wire [`ALU_OP_WIDTH-1:0]	srl_or_sra;
+	wire [`ALU_OP_WIDTH-1:0] 	add_or_sub;
+	wire [`RS_ENT_SEL-1:0]		rs_ent_md;
 
-	);
-
-	wire [`ALU_OP_WIDTH-1:0] 			  srl_or_sra;
-	wire [`ALU_OP_WIDTH-1:0] 			  add_or_sub;
-	wire [`RS_ENT_SEL-1:0] 			  rs_ent_md;
-
-	wire [6:0] 		    opcode = inst[6:0];
-	wire [6:0] 		    funct7 = inst[31:25];
-	wire [11:0] 		    funct12 = inst[31:20];
-	wire [2:0] 		    funct3 = inst[14:12];
-	// reg [`MD_OP_WIDTH-1:0]   md_req_op;
+	wire [6:0] 					opcode = inst[6:0];
+	wire [6:0] 					funct7 = inst[31:25];
+	wire [11:0] 				funct12 = inst[31:20];
+	wire [2:0] 					funct3 = inst[14:12];
+	// reg [`MD_OP_WIDTH-1:0]	md_req_op;
 	reg [`ALU_OP_WIDTH-1:0]  alu_op_arith;
 
 	assign rd = inst[11:7];
@@ -58,32 +55,36 @@ module decoder(
 		uses_rs1 = 1'b1;
 		uses_rs2 = 1'b0;
 		illegal_instruction = 1'b0;
-		//      dmem_use = 1'b0;
-		//     dmem_write = 1'b0;
+		//	  dmem_use = 1'b0;
+		//	 dmem_write = 1'b0;
 		rs_ent = `RS_ENT_ALU;
 		alu_op = `ALU_OP_ADD;
 
 		case (opcode)
 			`RV32_CUSTOM_0: begin
-
-
+				funct7 = inst[31:25];
+				funct3 = inst[14:12];
+				rs_ent = `RS_ENT_C1;
+				//get info about wr_reg, uses_rs1, uses_rs2, src_b_sel, 
 			end 
 
 			`RV32_CUSTOM_1: begin
-
+				funct7 = inst[31:25];
+				funct3 = inst[14:12];
+				rs_ent = `RS_ENT_C2;
 			end 
 
 			`RV32_LOAD : begin
-				//           dmem_use = 1'b1;
+				//			dmem_use = 1'b1;
 				wr_reg = 1'b1;
 				rs_ent = `RS_ENT_LDST;
-				//           wb_src_sel_DX = `WB_SRC_MEM;
+				//			wb_src_sel_DX = `WB_SRC_MEM;
 			end
 			`RV32_STORE : begin
 				uses_rs2 = 1'b1;
 				imm_type = `IMM_S;
-				//           dmem_use = 1'b1;
-				//          dmem_write = 1'b1;
+				//			dmem_use = 1'b1;
+				//		  dmem_write = 1'b1;
 				rs_ent = `RS_ENT_LDST;
 			end
 			`RV32_BRANCH : begin
@@ -102,7 +103,7 @@ module decoder(
 				rs_ent = `RS_ENT_BRANCH;
 			end
 			`RV32_JAL : begin
-				//           jal_unkilled = 1'b1;
+				//			jal_unkilled = 1'b1;
 				uses_rs1 = 1'b0;
 				src_a_sel = `SRC_A_PC;
 				src_b_sel = `SRC_B_FOUR;
@@ -111,7 +112,7 @@ module decoder(
 			end
 			`RV32_JALR : begin
 				illegal_instruction = (funct3 != 0);
-				//           jalr_unkilled = 1'b1;
+				//			jalr_unkilled = 1'b1;
 				src_a_sel = `SRC_A_PC;
 				src_b_sel = `SRC_B_FOUR;
 				wr_reg = 1'b1;
@@ -147,9 +148,9 @@ module decoder(
 				alu_op = alu_op_arith;
 				wr_reg = 1'b1;
 				if (funct7 == `RV32_FUNCT7_MUL_DIV) begin
-					//              uses_md_unkilled = 1'b1;
+					//			  uses_md_unkilled = 1'b1;
 					rs_ent = rs_ent_md;
-					//              wb_src_sel_DX = `WB_SRC_MD;
+					//			  wb_src_sel_DX = `WB_SRC_MD;
 				end
 			end
 			/*
