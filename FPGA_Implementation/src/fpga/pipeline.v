@@ -499,16 +499,16 @@ module pipeline(
 	wire					robwe_mul;
 	wire					kill_speculative_mul;
 
-	reg [`DATA_LEN-1:0]	buf_ex_src1_mul;
-	reg [`DATA_LEN-1:0]	buf_ex_src2_mul;
-	reg [`ADDR_LEN-1:0]	buf_pc_mul;
-	reg [`RRF_SEL-1:0]	buf_rrftag_mul;
-	reg					buf_dstval_mul;
+	reg [`DATA_LEN-1:0]		buf_ex_src1_mul;
+	reg [`DATA_LEN-1:0]		buf_ex_src2_mul;
+	reg [`ADDR_LEN-1:0]		buf_pc_mul;
+	reg [`RRF_SEL-1:0]		buf_rrftag_mul;
+	reg						buf_dstval_mul;
 	reg [`SPECTAG_LEN-1:0]	buf_spectag_mul;
-	reg					buf_specbit_mul;
-	reg					buf_src1_signed_mul;
-	reg					buf_src2_signed_mul;
-	reg					buf_sel_lohi_mul;
+	reg						buf_specbit_mul;
+	reg						buf_src1_signed_mul;
+	reg						buf_src2_signed_mul;
+	reg						buf_sel_lohi_mul;
 
 	//BRANCH
 	wire					prmiss;
@@ -576,14 +576,14 @@ module pipeline(
 	wire [`SPECTAG_LEN-1:0]	spectagfix;
 
 	//COM
-	wire [`RRF_SEL-1:0]	comptr;
-	wire [`RRF_SEL-1:0]	comptr2;
-	wire [1:0]	comnum;
+	wire [`RRF_SEL-1:0]		comptr;
+	wire [`RRF_SEL-1:0]		comptr2;
+	wire [1:0]				comnum;
 	wire					stcommit;
 	wire					arfwe1;
 	wire					arfwe2;
-	wire [`REG_SEL-1:0]	dstarf1;
-	wire [`REG_SEL-1:0]	dstarf2;
+	wire [`REG_SEL-1:0]		dstarf1;
+	wire [`REG_SEL-1:0]		dstarf2;
 	wire [`ADDR_LEN-1:0]	pc_combranch;
 	wire [`GSH_BHR_LEN-1:0]	bhr_combranch;
 	wire					brcond_combranch;

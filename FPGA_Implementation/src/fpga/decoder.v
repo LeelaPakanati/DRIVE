@@ -4,41 +4,41 @@
 
 `default_nettype none
 module decoder (
-	input  wire [		  31:0] inst,
-	output reg  [`IMM_TYPE_WIDTH-1:0] imm_type,
-	output wire [ `REG_SEL-1:0] rs1,
-	output wire [ `REG_SEL-1:0] rs2,
-	output wire [ `REG_SEL-1:0] rd,
-	output reg  [`SRC_A_SEL_WIDTH-1:0] src_a_sel,
-	output reg  [`SRC_B_SEL_WIDTH-1:0] src_b_sel,
-	output reg						  wr_reg,
-	output reg						  uses_rs1,
-	output reg						  uses_rs2,
-	output reg						  illegal_instruction,
-	output reg  [`ALU_OP_WIDTH-1:0] alu_op,
-	output reg  [`RS_ENT_SEL-1:0] rs_ent,
+	input  wire [31:0]					inst,
+	output reg  [`IMM_TYPE_WIDTH-1:0]	imm_type,
+	output wire [ `REG_SEL-1:0]			rs1,
+	output wire [ `REG_SEL-1:0]			rs2,
+	output wire [ `REG_SEL-1:0]			rd,
+	output reg  [`SRC_A_SEL_WIDTH-1:0]	src_a_sel,
+	output reg  [`SRC_B_SEL_WIDTH-1:0]	src_b_sel,
+	output reg							wr_reg,
+	output reg							uses_rs1,
+	output reg							uses_rs2,
+	output reg							illegal_instruction,
+	output reg  [`ALU_OP_WIDTH-1:0]		alu_op,
+	output reg  [`RS_ENT_SEL-1:0]		rs_ent,
 	//			output reg 			  dmem_use,
 	//			output reg 			  dmem_write,
-	output wire [		  2:0] dmem_size,
-	output wire [`MEM_TYPE_WIDTH-1:0] dmem_type,
-	output reg  [`MD_OP_WIDTH-1:0] md_req_op,
-	output reg						  md_req_in_1_signed,
-	output reg						  md_req_in_2_signed,
-	output reg  [`MD_OUT_SEL_WIDTH-1:0] md_req_out_sel,
-	output reg  [`FUNCT7_WIDTH-1:0] funct7,
-	output reg  [`FUNCT3_WIDTH-1:0] funct3
-);
+	output wire [2:0]					dmem_size,
+	output wire [`MEM_TYPE_WIDTH-1:0]	dmem_type,
+	output reg  [`MD_OP_WIDTH-1:0]		md_req_op,
+	output reg							md_req_in_1_signed,
+	output reg							md_req_in_2_signed,
+	output reg  [`MD_OUT_SEL_WIDTH-1:0]	md_req_out_sel,
+	output reg  [`FUNCT7_WIDTH-1:0]		funct7,
+	output reg  [`FUNCT3_WIDTH-1:0]		funct3
+	);
 
-	wire [`ALU_OP_WIDTH-1:0]	srl_or_sra;
-	wire [`ALU_OP_WIDTH-1:0] 	add_or_sub;
-	wire [`RS_ENT_SEL-1:0]		rs_ent_md;
+	wire [`ALU_OP_WIDTH-1:0]			srl_or_sra;
+	wire [`ALU_OP_WIDTH-1:0]			add_or_sub;
+	wire [`RS_ENT_SEL-1:0]				rs_ent_md;
 
-	wire [6:0] 					opcode = inst[6:0];
-	wire [6:0] 					funct7 = inst[31:25];
-	wire [11:0] 				funct12 = inst[31:20];
-	wire [2:0] 					funct3 = inst[14:12];
+	wire [6:0]							opcode = inst[6:0];
+	wire [6:0]							funct7 = inst[31:25];
+	wire [11:0]							funct12 = inst[31:20];
+	wire [2:0]							funct3 = inst[14:12];
 	// reg [`MD_OP_WIDTH-1:0]	md_req_op;
-	reg [`ALU_OP_WIDTH-1:0]  alu_op_arith;
+	reg [`ALU_OP_WIDTH-1:0]				alu_op_arith;
 
 	assign rd = inst[11:7];
 	assign rs1 = inst[19:15];
