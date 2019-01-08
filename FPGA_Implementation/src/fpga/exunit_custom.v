@@ -11,6 +11,7 @@ module exunit_custom(
 	input wire [`SRC_B_SEL_WIDTH-1:0] 	src_b,
 	input wire [`FUNCT7_WIDTH-1:0]		funct7,
 	input wire [`FUNCT3_WIDTH-1:0]		funct3,
+	input wire [24:0]					passbits,
 	input wire [`SPECTAG_LEN-1:0] 		spectag,
 	input wire							specbit,
 	input wire							issue,

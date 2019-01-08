@@ -37,7 +37,7 @@ module pipeline(
 	wire					invalid2_pipe;
 	wire [`GSH_BHR_LEN-1:0]	bhr;
 
-	//Instruction Buffer
+	//Instrue3vc ction Buffer
 	reg						prcond_if;
 	reg	[`ADDR_LEN-1:0]		npc_if;
 	reg	[`ADDR_LEN-1:0]		pc_if;
@@ -49,6 +49,9 @@ module pipeline(
 	wire					attachable;
 
 	//ID
+	wire [5:0]	cistC1;
+	wire [5:0]	cistC2;
+
 	//Decode Info1
 	wire [`IMM_TYPE_WIDTH-1:0]	imm_type_1;
 	wire [`REG_SEL-1:0]			rs1_1;
@@ -68,6 +71,10 @@ module pipeline(
 	wire						md_req_in_1_signed_1;
 	wire						md_req_in_2_signed_1;
 	wire [`MD_OUT_SEL_WIDTH-1:0]md_req_out_sel_1;
+	wire [`FUNCT7_WIDTH-1:0]	funct7_1;
+	wire [`FUNCT3_WIDTH-1:0]	funct3_1;
+	wire [24:0]					passbits_1;
+
 	//Decode Info2
 	wire [`IMM_TYPE_WIDTH-1:0]	imm_type_2;
 	wire [`REG_SEL-1:0]			rs1_2;
@@ -87,6 +94,10 @@ module pipeline(
 	wire						md_req_in_1_signed_2;
 	wire						md_req_in_2_signed_2;
 	wire [`MD_OUT_SEL_WIDTH-1:0]md_req_out_sel_2;
+	wire [`FUNCT7_WIDTH-1:0]	funct7_2;
+	wire [`FUNCT3_WIDTH-1:0]	funct3_2;
+	wire [24:0]					passbits_2;
+
 	//Additional Info
 	wire [`SPECTAG_LEN-1:0]		sptag1;
 	wire [`SPECTAG_LEN-1:0]		sptag2;
@@ -119,8 +130,9 @@ module pipeline(
 	reg							md_req_in_2_signed_1_id;
 	reg [`MD_OUT_SEL_WIDTH-1:0]	md_req_out_sel_1_id;
 
-	reg ['FUNCT7_WIDTH-1:0]		funct7_1;
-	reg ['FUNCT3_WIDTH-1:0]		funct3_1;
+	reg [`FUNCT7_WIDTH-1:0]		funct7_1_id;
+	reg [`FUNCT3_WIDTH-1:0]		funct3_1_id;
+	reg [24:0]					passbits_1_id;
 
 
 	//Decode Info2
@@ -143,8 +155,9 @@ module pipeline(
 	reg							md_req_in_2_signed_2_id;
 	reg [`MD_OUT_SEL_WIDTH-1:0]	md_req_out_sel_2_id;
 
-	reg ['FUNCT7_WIDTH-1:0]		funct7_2;
-	reg ['FUNCT3_WIDTH-1:0]		funct3_2;
+	reg [`FUNCT7_WIDTH-1:0]		funct7_2_id;
+	reg [`FUNCT3_WIDTH-1:0]		funct3_2_id;
+	reg [24:0]					passbits_2_id;
 
 
 	//Additional Info
@@ -395,6 +408,7 @@ module pipeline(
 	wire [`SRC_B_SEL_WIDTH-1:0]	src_b_C1;
 	wire [`FUNCT7_WIDTH-1:0]	funct7_C1;
 	wire [`FUNCT3_WIDTH-1:0]	funct3_C1;
+	wire [24:0]					passbits_C1;
 
 	//-----C2------------------------------------------
 	//alloc unit
@@ -421,7 +435,7 @@ module pipeline(
 	wire [`SRC_B_SEL_WIDTH-1:0]	src_b_C2;
 	wire [`FUNCT7_WIDTH-1:0]	funct7_C2;
 	wire [`FUNCT3_WIDTH-1:0]	funct3_C2;
-
+	wire [24:0]					passbits_C2;
 
 
 	//EX
@@ -549,6 +563,7 @@ module pipeline(
 	reg [`SRC_B_SEL_WIDTH-1:0]	buf_src_b_C1;
 	reg [`FUNCT7_WIDTH-1:0]		buf_funct7_C1;
 	reg [`FUNCT3_WIDTH-1-1:0]	buf_funct3_C1;
+	reg [24:0]					buf_passbits_C1;
 	reg [`SPECTAG_LEN-1:0]		buf_spectag_C1;
 	reg							buf_specbit_C1;
 
@@ -567,6 +582,7 @@ module pipeline(
 	reg [`SRC_B_SEL_WIDTH-1:0]	buf_src_b_C2;
 	reg [`FUNCT7_WIDTH-1:0]		buf_funct7_C2;
 	reg [`FUNCT3_WIDTH-1-1:0]	buf_funct3_C2;
+	reg [24:0]					buf_passbits_C2;
 	reg [`SPECTAG_LEN-1:0]		buf_spectag_C2;
 	reg							buf_specbit_C2;
 
@@ -682,8 +698,17 @@ module pipeline(
 		.attachable(attachable),
 		.tagreg(tagreg));
 
+	cist cist_0(
+		.wr_en(),
+		.sel(),
+		.val(),
+		.cistC1(cistC1),
+		.cistC2(cistC2));
+
 	decoder dec1(
 		.inst(inst1_if),
+		.cistC1(cistC1),
+		.cistC2(cistC2),
 		.imm_type(imm_type_1),
 		.rs1(rs1_1),
 		.rs2(rs2_1),
@@ -701,10 +726,13 @@ module pipeline(
 		.md_req_op(md_req_op_1),
 		.md_req_in_1_signed(md_req_in_1_signed_1),
 		.md_req_in_2_signed(md_req_in_2_signed_1),
-		.md_req_out_sel(md_req_out_sel_1));
+		.md_req_out_sel(md_req_out_sel_1),
+		.passbits(passbits_1));
 
 	decoder dec2(
 		.inst(inst2_if),
+		.cistC1(cistC1),
+		.cistC2(cistC2),
 		.imm_type(imm_type_2),
 		.rs1(rs1_2),
 		.rs2(rs2_2),
@@ -722,7 +750,8 @@ module pipeline(
 		.md_req_op(md_req_op_2),
 		.md_req_in_1_signed(md_req_in_1_signed_2),
 		.md_req_in_2_signed(md_req_in_2_signed_2),
-		.md_req_out_sel(md_req_out_sel_2));
+		.md_req_out_sel(md_req_out_sel_2),
+		.passbits(passbits_2));
 
 	always @(posedge clk) begin
 		if(reset | kill_ID) begin
@@ -744,6 +773,7 @@ module pipeline(
 			md_req_in_1_signed_1_id	<= 0;
 			md_req_in_2_signed_1_id	<= 0;
 			md_req_out_sel_1_id		<= 0;
+
 			imm_type_2_id			<= 0;
 			rs1_2_id				<= 0;
 			rs2_2_id				<= 0;
@@ -762,6 +792,13 @@ module pipeline(
 			md_req_in_1_signed_2_id	<= 0;
 			md_req_in_2_signed_2_id	<= 0;
 			md_req_out_sel_2_id		<= 0;
+
+			funct7_1_id				<= 0;
+			funct3_1_id				<= 0;
+			passbits_1_id			<= 0;
+			funct7_2_id				<= 0;
+			funct3_2_id				<= 0;
+			passbits_2_id			<= 0;
 
 			rs1_2_eq_dst1_id <= 0;
 			rs2_2_eq_dst1_id <= 0;
@@ -801,6 +838,7 @@ module pipeline(
 			md_req_in_1_signed_1_id	<= md_req_in_1_signed_1;
 			md_req_in_2_signed_1_id	<= md_req_in_2_signed_1;
 			md_req_out_sel_1_id		<= md_req_out_sel_1;
+			
 			imm_type_2_id			<= imm_type_2;
 			rs1_2_id				<= rs1_2;
 			rs2_2_id				<= rs2_2;
@@ -819,6 +857,13 @@ module pipeline(
 			md_req_in_1_signed_2_id	<= md_req_in_1_signed_2;
 			md_req_in_2_signed_2_id	<= md_req_in_2_signed_2;
 			md_req_out_sel_2_id		<= md_req_out_sel_2;
+
+			funct7_1_id				<= funct7_1;
+			funct3_1_id				<= funct3_1;
+			passbits_1_id			<= passbits_1;
+			funct7_2_id				<= funct7_2;
+			funct3_2_id				<= funct3_2;
+			passbits_2_id			<= passbits_2;
 
 			rs1_2_eq_dst1_id <=(rs1_2 == rd_1 && wr_reg_1) ? 1'b1 : 1'b0;
 			rs2_2_eq_dst1_id <=(rs2_2 == rd_1 && wr_reg_1) ? 1'b1 : 1'b0;
@@ -1770,8 +1815,9 @@ module pipeline(
 		.wdstval_1(wr_reg_1_id),
 		.wsrc_a_1(src_a_sel_1_id),
 		.wsrc_b_1(src_b_sel_1_id),
-		.wfunct7_1(funct7_1),
-		.wfunct3_1(funct3_1),
+		.wfunct7_1(funct7_1_id),
+		.wfunct3_1(funct3_1_id),
+		.wpassbits_1(passbits_1_id),
 		.wspectag_1(sptag1_id),
 		.wspecbit_1(spec1_id),
 		//WriteSignal2
@@ -1784,8 +1830,9 @@ module pipeline(
 		.wdstval_2(wr_reg_2_id),
 		.wsrc_a_2(src_a_sel_2_id),
 		.wsrc_b_2(src_b_sel_2_id),
-		.wfunct7_2(funct7_2),
-		.wfunct3_2(funct3_2),
+		.wfunct7_2(funct7_2_id),
+		.wfunct3_2(funct3_2_id),
+		.wpassbits_2(passbits_2_id),
 		.wspectag_2(sptag2_id),
 		.wspecbit_2(spec2_id),
 		//ReadSignal
@@ -1799,6 +1846,7 @@ module pipeline(
 		.src_b(src_b_C1),
 		.funct7(funct7_C1),
 		.funct3(funct3_C1),
+		.passbits(passbits_C1),
 		.spectag(spectag_C1),
 		.specbit(specbit_C1),
 		//EXRSLT
@@ -1868,8 +1916,9 @@ module pipeline(
 		.wdstval_1(wr_reg_1_id),
 		.wsrc_a_1(src_a_sel_1_id),
 		.wsrc_b_1(src_b_sel_1_id),
-		.wfunct7_1(funct7_1),
-		.wfunct3_1(funct3_1),
+		.wfunct7_1(funct7_1_id),
+		.wfunct3_1(funct3_1_id),
+		.wpassbis_1(passbits_1_id),
 		.wspectag_1(sptag1_id),
 		.wspecbit_1(spec1_id),
 		//WriteSignal2
@@ -1882,8 +1931,9 @@ module pipeline(
 		.wdstval_2(wr_reg_2_id),
 		.wsrc_a_2(src_a_sel_2_id),
 		.wsrc_b_2(src_b_sel_2_id),
-		.wfunct7_2(funct7_2),
-		.wfunct3_2(funct3_2),
+		.wfunct7_2(funct7_2_id),
+		.wfunct3_2(funct3_2_id),
+		.wpassbits_2(passbits_2_id),
 		.wspectag_2(sptag2_id),
 		.wspecbit_2(spec2_id),
 		//ReadSignal
@@ -1897,6 +1947,7 @@ module pipeline(
 		.src_b(src_b_C2),
 		.funct7(funct7_C2),
 		.funct3(funct3_C2),
+		.passbits(passbits_C2),
 		.spectag(spectag_C2),
 		.specbit(specbit_C2),
 		//EXRSLT
@@ -2217,6 +2268,7 @@ dmem datamemory(
 			buf_src_b_C1	<= 0;
 			buf_funct7_C1	<= 0;
 			buf_funct3_C1	<= 0;
+			buf_passbits_C1	<= 0;
 			buf_spectag_C1 <= 0;
 			buf_specbit_C1 <= 0;
 		end else if(issue_C1) begin
@@ -2229,6 +2281,7 @@ dmem datamemory(
 			buf_src_b_C1	<= src_b_C1;
 			buf_funct7_C1	<= funct7_C1;
 			buf_funct3_C1	<= funct3_C1;
+			buf_passbits_C1	<= passbits_1;
 			buf_spectag_C1 <= spectag_C1;
 			buf_specbit_C1 <= specbit_C1;
 		end
@@ -2245,6 +2298,7 @@ dmem datamemory(
 		.src_b(buf_src_b_C1),
 		.funct7(buf_funct7_C1),
 		.funct3(buf_funct3_C1),
+		.passbits(buf_passbits_C1),
 		.spectag(buf_spectag_C1),
 		.specbit(buf_specbit_C1),
 		.issue(issue_C1),
@@ -2268,6 +2322,7 @@ dmem datamemory(
 			buf_src_b_C2	<= 0;
 			buf_funct7_C2	<= 0;
 			buf_funct3_C2	<= 0;
+			buf_passbits_C2	<= 0;
 			buf_spectag_C2 <= 0;
 			buf_specbit_C2 <= 0;
 		end else if(issue_C2) begin
@@ -2280,6 +2335,7 @@ dmem datamemory(
 			buf_src_b_C2	<= src_b_C2;
 			buf_funct7_C2	<= funct7_C2;
 			buf_funct3_C2	<= funct3_C2;
+			buf_passbits_C2	<= passbits_2;
 			buf_spectag_C2 <= spectag_C2;
 			buf_specbit_C2 <= specbit_C2;
 		end
@@ -2296,6 +2352,7 @@ dmem datamemory(
 		.src_b(buf_src_b_C2),
 		.funct7(buf_funct7_C2),
 		.funct3(buf_funct3_C2),
+		.passbits(buf_passbits_C2),
 		.spectag(buf_spectag_C2),
 		.specbit(buf_specbit_C2),
 		.issue(issue_C2),

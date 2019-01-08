@@ -16,6 +16,7 @@ module rs_FPGA_ent(	//Memory
 	input wire [`SRC_B_SEL_WIDTH-1:0] 	wsrc_b,
 	input wire [`FUNCT7_WIDTH-1:0]		wfunct7,
 	input wire [`FUNCT3_WIDTH-1:0]		wfunct3,
+	input wire [24:0]					wpassbits,
 	input wire [`SPECTAG_LEN-1:0] 	 wspectag,
 	input wire 			 we,
 
@@ -30,6 +31,7 @@ module rs_FPGA_ent(	//Memory
 	output reg [`SRC_B_SEL_WIDTH-1:0] 	src_b,
 	output reg [`FUNCT7_WIDTH-1:0]		funct7,
 	output reg [`FUNCT3_WIDTH-1:0]		funct3,	
+	output reg [24:0]					passbits,	
 	output reg [`SPECTAG_LEN-1:0] spectag,
 	//EXRSLT
 	input wire [`DATA_LEN-1:0] 	 exrslt1,
@@ -81,6 +83,7 @@ module rs_FPGA_ent(	//Memory
 			src_b <= 0;
 			funct7 <= 0;
 			funct3 <= 0;
+			passbits <= 0;
 			spectag <= 0;
 
 			src1 <= 0;
@@ -95,6 +98,7 @@ module rs_FPGA_ent(	//Memory
 			src_b <= wsrc_b;
 			funct7 <= wfunct7;
 			funct3 <= wfunct3;
+			passbits <= wpassbits;
 
 			spectag <= wspectag;
 
@@ -203,6 +207,7 @@ module rs_FPGA (
 	input wire [`SRC_B_SEL_WIDTH-1:0] 	       wsrc_b_1,
 	input wire [`FUNCT7_WIDTH-1:0]		wfunct7_1,
 	input wire [`FUNCT3_WIDTH-1:0]		wfunct3_1,
+	input wire [24:0]					wpassbits_1,
 	input wire [`SPECTAG_LEN-1:0] 	       wspectag_1,
 	input wire 				       wspecbit_1,
 	
@@ -218,6 +223,7 @@ module rs_FPGA (
 	input wire [`SRC_B_SEL_WIDTH-1:0] 	       wsrc_b_2,
 	input wire [`FUNCT7_WIDTH-1:0]		wfunct7_2,
 	input wire [`FUNCT3_WIDTH-1:0]		wfunct3_2,
+	input wire [24:0]					wpassbits_2,
 	input wire [`SPECTAG_LEN-1:0] 	       wspectag_2,
 	input wire 				       wspecbit_2,
 
@@ -232,6 +238,7 @@ module rs_FPGA (
 	output wire [`SRC_B_SEL_WIDTH-1:0] 	       src_b,
 	output wire [`FUNCT7_WIDTH-1:0]		funct7,
 	output wire [`FUNCT3_WIDTH-1:0]		funct3,
+	output wire [24:0]					passbits,
 	output wire [`SPECTAG_LEN-1:0] 	       spectag,
 	output wire 				       specbit,
 
@@ -272,7 +279,8 @@ module rs_FPGA (
 	wire [`SRC_B_SEL_WIDTH-1:0] 	      src_b_0;
 	wire [`FUNCT7_WIDTH-1:0] 	      funct7_0;
 	wire [`FUNCT3_WIDTH-1:0] 	      funct3_0;
-	
+	wire [24:0] 	      passbits_0;
+
 	wire [`SPECTAG_LEN-1:0] 	      spectag_0;
 	//_1
 	wire [`DATA_LEN-1:0] 	      ex_src1_1;
@@ -284,8 +292,9 @@ module rs_FPGA (
 	wire 			      dstval_1;
 	wire [`SRC_A_SEL_WIDTH-1:0] 	      src_a_1;
 	wire [`SRC_B_SEL_WIDTH-1:0] 	      src_b_1;
-	wire [`FUNCT3_WIDTH-1:0] 	      funct7_1;
+	wire [`FUNCT7_WIDTH-1:0] 	      funct7_1;
 	wire [`FUNCT3_WIDTH-1:0] 	      funct3_1;
+	wire [24:0]				 	      passbits_1;	
 	wire [`SPECTAG_LEN-1:0] 	      spectag_1;
 
 	reg [`FPGA_ENT_NUM-1:0] 	      specbitvec;
@@ -374,7 +383,8 @@ module rs_FPGA (
 		.wsrc_a((we1 && (waddr1 == 0)) ? wsrc_a_1 : wsrc_a_2),
 		.wsrc_b((we1 && (waddr1 == 0)) ? wsrc_b_1 : wsrc_b_2),
 		.wfunct7((we1 && (waddr1 == 0)) ? wfunct7_1 : wfunct7_2),
-		.wfunct3((we1 && (waddr1 == 0)) ? wfunct7_1 : wfunct3_2),
+		.wfunct3((we1 && (waddr1 == 0)) ? wfunct3_1 : wfunct3_2),
+		.wpassbits((we1 && (waddr1 == 0)) ? wpassbits_1 : wpassbits_2),
 		.wspectag((we1 && (waddr1 == 0)) ? wspectag_1 : wspectag_2),
 		.we((we1 && (waddr1 == 0)) || (we2 && (waddr2 == 0))),
 		.ex_src1(ex_src1_0),
@@ -387,6 +397,7 @@ module rs_FPGA (
 		.src_b(src_b_0),
 		.funct7(funct7_0),
 		.funct3(funct3_0),
+		.passbits(passbits_0),
 		.spectag(spectag_0),
 		.exrslt1(exrslt1),
 		.exdst1(exdst1),
@@ -427,6 +438,7 @@ module rs_FPGA (
 		.wsrc_b((we1 && (waddr1 == 1)) ? wsrc_b_1 : wsrc_b_2),
 		.wfunct7((we1 && (waddr1 == 1)) ? wfunct7_1 : wfunct7_2),
 		.wfunct3((we1 && (waddr1 == 1)) ? wfunct3_1 : wfunct3_2),
+		.wpassbits((we1 && (waddr1 == 1)) ? wpassbits_1 : wpassbits_2),		
 		.wspectag((we1 && (waddr1 == 1)) ? wspectag_1 : wspectag_2),
 		.we((we1 && (waddr1 == 1)) || (we2 && (waddr2 == 1))),
 		.ex_src1(ex_src1_1),
@@ -439,6 +451,7 @@ module rs_FPGA (
 		.src_b(src_b_1),
 		.funct7(funct7_1),
 		.funct3(funct3_1),
+		.passbits(passbits_1),
 		.spectag(spectag_1),
 		.exrslt1(exrslt1),
 		.exdst1(exdst1),
@@ -480,6 +493,8 @@ module rs_FPGA (
 	assign funct7 = (issueaddr == 0) ? funct7_0 : funct7_1;
 
 	assign funct3 = (issueaddr == 0) ? funct3_0 : funct3_1;
+
+	assign passbits = (issueaddr == 0) ? passbits_0 : passbits_1;
 	
 	assign spectag = (issueaddr == 0) ? spectag_0 : spectag_1;
 

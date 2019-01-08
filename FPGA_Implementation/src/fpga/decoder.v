@@ -4,29 +4,32 @@
 
 `default_nettype none
 module decoder (
-	input  wire [31:0]					inst,
-	output reg  [`IMM_TYPE_WIDTH-1:0]	imm_type,
-	output wire [ `REG_SEL-1:0]			rs1,
-	output wire [ `REG_SEL-1:0]			rs2,
-	output wire [ `REG_SEL-1:0]			rd,
-	output reg  [`SRC_A_SEL_WIDTH-1:0]	src_a_sel,
-	output reg  [`SRC_B_SEL_WIDTH-1:0]	src_b_sel,
-	output reg							wr_reg,
-	output reg							uses_rs1,
-	output reg							uses_rs2,
-	output reg							illegal_instruction,
-	output reg  [`ALU_OP_WIDTH-1:0]		alu_op,
-	output reg  [`RS_ENT_SEL-1:0]		rs_ent,
+	input	wire [31:0]						inst,
+	input	wire [5:0]						cistC1,
+	input 	wire [5:0]						cistC2,
+	output	reg [`IMM_TYPE_WIDTH-1:0]		imm_type,
+	output	wire [`REG_SEL-1:0]				rs1,
+	output	wire [`REG_SEL-1:0]				rs2,
+	output	wire [`REG_SEL-1:0]				rd,
+	output	reg [`SRC_A_SEL_WIDTH-1:0]		src_a_sel,
+	output	reg [`SRC_B_SEL_WIDTH-1:0]		src_b_sel,
+	output	reg								wr_reg,
+	output	reg								uses_rs1,
+	output	reg								uses_rs2,
+	output	reg								illegal_instruction,
+	output	reg [`ALU_OP_WIDTH-1:0]			alu_op,
+	output	reg [`RS_ENT_SEL-1:0]			rs_ent,
 	//			output reg 			  dmem_use,
 	//			output reg 			  dmem_write,
-	output wire [2:0]					dmem_size,
-	output wire [`MEM_TYPE_WIDTH-1:0]	dmem_type,
-	output reg  [`MD_OP_WIDTH-1:0]		md_req_op,
-	output reg							md_req_in_1_signed,
-	output reg							md_req_in_2_signed,
-	output reg  [`MD_OUT_SEL_WIDTH-1:0]	md_req_out_sel,
-	output reg  [`FUNCT7_WIDTH-1:0]		funct7,
-	output reg  [`FUNCT3_WIDTH-1:0]		funct3
+	output	wire [2:0]						dmem_size,
+	output	wire [`MEM_TYPE_WIDTH-1:0]		dmem_type,
+	output	reg [`MD_OP_WIDTH-1:0]			md_req_op,
+	output	reg								md_req_in_1_signed,
+	output	reg								md_req_in_2_signed,
+	output	reg [`MD_OUT_SEL_WIDTH-1:0]		md_req_out_sel,
+	output	wire [`FUNCT7_WIDTH-1:0]		funct7,
+	output	wire [`FUNCT3_WIDTH-1:0]		funct3,
+	output	wire [24:0]						passbits
 	);
 
 	wire [`ALU_OP_WIDTH-1:0]			srl_or_sra;
@@ -34,12 +37,13 @@ module decoder (
 	wire [`RS_ENT_SEL-1:0]				rs_ent_md;
 
 	wire [6:0]							opcode = inst[6:0];
-	wire [6:0]							funct7 = inst[31:25];
+	assign								funct7 = inst[31:25];
 	wire [11:0]							funct12 = inst[31:20];
-	wire [2:0]							funct3 = inst[14:12];
+	assign								funct3 = inst[14:12];
 	// reg [`MD_OP_WIDTH-1:0]	md_req_op;
 	reg [`ALU_OP_WIDTH-1:0]				alu_op_arith;
 
+	assign passbits = inst[31:7];
 	assign rd = inst[11:7];
 	assign rs1 = inst[19:15];
 	assign rs2 = inst[24:20];
@@ -62,16 +66,35 @@ module decoder (
 
 		case (opcode)
 			`RV32_CUSTOM_0: begin
-				funct7 = inst[31:25];
-				funct3 = inst[14:12];
 				rs_ent = `RS_ENT_C1;
-				//get info about wr_reg, uses_rs1, uses_rs2, src_b_sel, 
-			end 
+				wr_reg = cistC1[5];
+				uses_rs1 = cistC1[4];
+				uses_rs2 = cistC1[3];
+				if(cistC1[2])
+					src_a_sel = SRC_A_ZERO;
+				else 
+					src_a_sel = SRC_A_RS1;
 
+				if(cistC1[1])
+					src_b_sel = SRC_B_IMM;
+				else 
+					src_b_sel = SRC_B_RS2;
+			//get info about wr_reg, uses_rs1, uses_rs2, src_b_sel from cist
+			end
 			`RV32_CUSTOM_1: begin
-				funct7 = inst[31:25];
-				funct3 = inst[14:12];
 				rs_ent = `RS_ENT_C2;
+				wr_reg = cistC2[5];
+				uses_rs1 = cistC2[4];
+				uses_rs2 = cistC2[3];
+				if(cistC2[2])
+					src_a_sel = SRC_A_ZERO;
+				else 
+					src_a_sel = SRC_A_RS1;
+
+				if(cistC2[1])
+					src_b_sel = SRC_B_IMM;
+				else 
+					src_b_sel = SRC_B_RS2;
 			end 
 
 			`RV32_LOAD : begin
