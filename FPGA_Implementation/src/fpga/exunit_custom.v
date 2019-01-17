@@ -23,8 +23,21 @@ module exunit_custom(
 	output wire							kill_speculative
 	);
 
-	reg	busy;
+	custom_logic_pr_block(
+		.clk(clk),
+		.reset(reset),
+		.ex_src1(ex_src1),
+		.ex_src2(ex_src2),
+		.imm(imm),
+		.dstval(dstval),
+		.funct7(funct7),
+		.fuct3(funct3),
+		.passbits(passbits),
+		.issue(issue),
+		.result(result)
+	);
 
+	reg	busy;
 	assign rob_we = busy;
 	assign rrf_we = busy & dstval;
 	assign kill_speculative = ((spectag & spectagfix) != 0) && specbit && prmiss;

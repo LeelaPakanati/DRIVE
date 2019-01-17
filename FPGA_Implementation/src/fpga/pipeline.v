@@ -699,7 +699,7 @@ module pipeline(
 		.tagreg(tagreg));
 
 	cist cist_0(
-		.wr_en(),
+		.wr_en(1'b0),
 		.sel(),
 		.val(),
 		.cistC1(cistC1),
@@ -1918,7 +1918,7 @@ module pipeline(
 		.wsrc_b_1(src_b_sel_1_id),
 		.wfunct7_1(funct7_1_id),
 		.wfunct3_1(funct3_1_id),
-		.wpassbis_1(passbits_1_id),
+		.wpassbits_1(passbits_1_id),
 		.wspectag_1(sptag1_id),
 		.wspecbit_1(spec1_id),
 		//WriteSignal2

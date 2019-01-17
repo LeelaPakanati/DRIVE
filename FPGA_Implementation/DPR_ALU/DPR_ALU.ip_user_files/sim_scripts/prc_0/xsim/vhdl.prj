@@ -1,0 +1,9 @@
+vhdl xil_defaultlib  \
+"../../../../DPR_ALU.srcs/sources_1/ip/prc_0/prc_prc_0_table_pkg.vhd" \
+"../../../../DPR_ALU.srcs/sources_1/ip/prc_0/prc_prc_0_vsm_vs_alu.vhd" \
+"../../../../DPR_ALU.srcs/sources_1/ip/prc_0/prc_prc_0_fetch.vhd" \
+"../../../../DPR_ALU.srcs/sources_1/ip/prc_0/prc_prc_0_icap_if_0.vhd" \
+"../../../../DPR_ALU.srcs/sources_1/ip/prc_0/prc_prc_0.vhd" \
+"../../../../DPR_ALU.srcs/sources_1/ip/prc_0/sim/prc_0.vhd" \
+
+nosort

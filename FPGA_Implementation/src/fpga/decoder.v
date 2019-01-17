@@ -71,14 +71,14 @@ module decoder (
 				uses_rs1 = cistC1[4];
 				uses_rs2 = cistC1[3];
 				if(cistC1[2])
-					src_a_sel = SRC_A_ZERO;
+					src_a_sel = `SRC_A_ZERO;
 				else 
-					src_a_sel = SRC_A_RS1;
+					src_a_sel = `SRC_A_RS1;
 
 				if(cistC1[1])
-					src_b_sel = SRC_B_IMM;
+					src_b_sel = `SRC_B_IMM;
 				else 
-					src_b_sel = SRC_B_RS2;
+					src_b_sel = `SRC_B_RS2;
 			//get info about wr_reg, uses_rs1, uses_rs2, src_b_sel from cist
 			end
 			`RV32_CUSTOM_1: begin
@@ -87,14 +87,14 @@ module decoder (
 				uses_rs1 = cistC2[4];
 				uses_rs2 = cistC2[3];
 				if(cistC2[2])
-					src_a_sel = SRC_A_ZERO;
+					src_a_sel = `SRC_A_ZERO;
 				else 
-					src_a_sel = SRC_A_RS1;
+					src_a_sel = `SRC_A_RS1;
 
 				if(cistC2[1])
-					src_b_sel = SRC_B_IMM;
+					src_b_sel = `SRC_B_IMM;
 				else 
-					src_b_sel = SRC_B_RS2;
+					src_b_sel = `SRC_B_RS2;
 			end 
 
 			`RV32_LOAD : begin

@@ -21,6 +21,7 @@
     <Option Name="ActiveSimSet" Val="sim_1"/>
     <Option Name="DefaultLib" Val="xil_defaultlib"/>
     <Option Name="ProjectType" Val="Default"/>
+    <Option Name="PRFlow" Val="TRUE"/>
     <Option Name="IPOutputRepo" Val="$PCACHEDIR/ip"/>
     <Option Name="IPCachePermission" Val="read"/>
     <Option Name="IPCachePermission" Val="write"/>
@@ -107,6 +108,13 @@
         </FileInfo>
       </File>
       <File Path="$PPRDIR/../src/fpga/btb.v">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/../src/fpga/cist.v">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
@@ -246,6 +254,13 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PPRDIR/../src/fpga/rs_FPGA.v">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PPRDIR/../src/fpga/rs_alu.v">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -323,13 +338,6 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PPRDIR/../src/fpga/rs_FPGA.sv">
-        <FileInfo>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
       <File Path="$PPRDIR/../src/fpga/pipeline.v">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
@@ -339,6 +347,7 @@
       </File>
       <File Path="$PPRDIR/../src/fpga/dmem.v">
         <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -346,26 +355,7 @@
       </File>
       <File Path="$PPRDIR/../src/fpga/imem.v">
         <FileInfo>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/bd/design_1/design_1.bd">
-        <FileInfo>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-        <CompFileExtendedInfo CompFileName="design_1.bd" FileRelPathName="ip/design_1_rst_clk_wiz_100M_0_1/design_1_rst_clk_wiz_100M_0.xci">
-          <Proxy FileSetName="design_1_rst_clk_wiz_100M_0"/>
-        </CompFileExtendedInfo>
-        <CompFileExtendedInfo CompFileName="design_1.bd" FileRelPathName="ip/design_1_clk_wiz_1/design_1_clk_wiz_1.xci">
-          <Proxy FileSetName="design_1_clk_wiz_1"/>
-        </CompFileExtendedInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/bd/design_1/hdl/design_1_wrapper.v">
-        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -386,9 +376,26 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PSRCDIR/sources_1/new/custom_logic_pr_block.v">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/bd/design_1/design_1.bd">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
-        <Option Name="TopModule" Val="design_1_wrapper"/>
+        <Option Name="TopModule" Val="pipeline"/>
+        <Option Name="TopAutoSet" Val="TRUE"/>
       </Config>
     </FileSet>
     <FileSet Name="constrs_1" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
@@ -403,22 +410,23 @@
         <Option Name="DesignMode" Val="RTL"/>
         <Option Name="TopModule" Val="pipeline"/>
         <Option Name="TopLib" Val="xil_defaultlib"/>
-        <Option Name="TopRTLFile" Val="$PPRDIR/../src/fpga/pipeline.v"/>
         <Option Name="TopAutoSet" Val="TRUE"/>
         <Option Name="TransportPathDelay" Val="0"/>
         <Option Name="TransportIntDelay" Val="0"/>
         <Option Name="SrcSet" Val="sources_1"/>
       </Config>
     </FileSet>
-    <FileSet Name="design_1_clk_wiz_1" Type="BlockSrcs" RelSrcDir="$PSRCDIR/design_1_clk_wiz_1">
+    <FileSet Name="custom_logic_pr_block" Type="BlockSrcs" RelSrcDir="$PSRCDIR/custom_logic_pr_block">
+      <File Path="$PPRDIR/../src/fpga/custom_logic_pr_block.v">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <Config>
-        <Option Name="TopModule" Val="design_1_clk_wiz_1"/>
-        <Option Name="UseBlackboxStub" Val="1"/>
-      </Config>
-    </FileSet>
-    <FileSet Name="design_1_rst_clk_wiz_100M_0" Type="BlockSrcs" RelSrcDir="$PSRCDIR/design_1_rst_clk_wiz_100M_0">
-      <Config>
-        <Option Name="TopModule" Val="design_1_rst_clk_wiz_100M_0"/>
+        <Option Name="TopModule" Val="custom_logic_pr_block"/>
+        <Option Name="TopRTLFile" Val="$PPRDIR/../src/fpga/custom_logic_pr_block.v"/>
         <Option Name="UseBlackboxStub" Val="1"/>
       </Config>
     </FileSet>
@@ -442,51 +450,25 @@
     </Simulator>
   </Simulators>
   <Runs Version="1" Minor="10">
-    <Run Id="synth_1" Type="Ft3:Synth" SrcSet="sources_1" Part="xc7k325tffg900-2" ConstrsSet="constrs_1" Description="Vivado Synthesis Defaults" WriteIncrSynthDcp="false" State="current" Dir="$PRUNDIR/synth_1" IncludeInArchive="true">
+    <Run Id="synth_1" Type="Ft3:Synth" SrcSet="sources_1" Part="xc7k325tffg900-2" ConstrsSet="constrs_1" Description="Vivado Synthesis Defaults" WriteIncrSynthDcp="false" State="current" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2018"/>
         <Step Id="synth_design"/>
       </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
       <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2018"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
     </Run>
-    <Run Id="design_1_clk_wiz_1_synth_1" Type="Ft3:Synth" SrcSet="design_1_clk_wiz_1" Part="xc7k325tffg900-2" ConstrsSet="design_1_clk_wiz_1" Description="Vivado Synthesis Defaults" WriteIncrSynthDcp="false" Dir="$PRUNDIR/design_1_clk_wiz_1_synth_1" IncludeInArchive="true">
+    <Run Id="custom_logic_pr_block_synth_1" Type="Ft3:Synth" SrcSet="custom_logic_pr_block" Part="xc7k325tffg900-2" ConstrsSet="custom_logic_pr_block" Description="Vivado Synthesis Defaults" WriteIncrSynthDcp="false" IncludeInArchive="true">
       <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2018"/>
+        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2018">
+          <Desc>Vivado Synthesis Defaults</Desc>
+        </StratHandle>
         <Step Id="synth_design"/>
       </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
       <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2018"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
     </Run>
-    <Run Id="design_1_rst_clk_wiz_100M_0_synth_1" Type="Ft3:Synth" SrcSet="design_1_rst_clk_wiz_100M_0" Part="xc7k325tffg900-2" ConstrsSet="design_1_rst_clk_wiz_100M_0" Description="Vivado Synthesis Defaults" WriteIncrSynthDcp="false" Dir="$PRUNDIR/design_1_rst_clk_wiz_100M_0_synth_1" IncludeInArchive="true">
-      <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2018"/>
-        <Step Id="synth_design"/>
-      </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
-      <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2018"/>
-      <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
-    </Run>
-    <Run Id="impl_1" Type="Ft2:EntireDesign" Part="xc7k325tffg900-2" ConstrsSet="constrs_1" Description="Default settings for Implementation." WriteIncrSynthDcp="false" State="current" Dir="$PRUNDIR/impl_1" SynthRun="synth_1" IncludeInArchive="true" GenFullBitstream="true">
-      <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2018"/>
-        <Step Id="init_design"/>
-        <Step Id="opt_design"/>
-        <Step Id="power_opt_design"/>
-        <Step Id="place_design"/>
-        <Step Id="post_place_power_opt_design"/>
-        <Step Id="phys_opt_design"/>
-        <Step Id="route_design"/>
-        <Step Id="post_route_phys_opt_design"/>
-        <Step Id="write_bitstream"/>
-      </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
-      <ReportStrategy Name="Vivado Implementation Default Reports" Flow="Vivado Implementation 2018"/>
-      <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
-    </Run>
-    <Run Id="design_1_clk_wiz_1_impl_1" Type="Ft2:EntireDesign" Part="xc7k325tffg900-2" ConstrsSet="design_1_clk_wiz_1" Description="Default settings for Implementation." WriteIncrSynthDcp="false" SynthRun="design_1_clk_wiz_1_synth_1" IncludeInArchive="false" GenFullBitstream="true">
+    <Run Id="impl_1" Type="Ft2:EntireDesign" Part="xc7k325tffg900-2" ConstrsSet="constrs_1" Description="Default settings for Implementation." WriteIncrSynthDcp="false" State="current" SynthRun="synth_1" IncludeInArchive="true" GenFullBitstream="true">
       <Strategy Version="1" Minor="2">
         <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2018"/>
         <Step Id="init_design"/>
@@ -502,9 +484,11 @@
       <ReportStrategy Name="Vivado Implementation Default Reports" Flow="Vivado Implementation 2018"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
     </Run>
-    <Run Id="design_1_rst_clk_wiz_100M_0_impl_1" Type="Ft2:EntireDesign" Part="xc7k325tffg900-2" ConstrsSet="design_1_rst_clk_wiz_100M_0" Description="Default settings for Implementation." WriteIncrSynthDcp="false" SynthRun="design_1_rst_clk_wiz_100M_0_synth_1" IncludeInArchive="false" GenFullBitstream="true">
+    <Run Id="custom_logic_pr_block_impl_1" Type="Ft2:EntireDesign" Part="xc7k325tffg900-2" ConstrsSet="custom_logic_pr_block" Description="Default settings for Implementation." WriteIncrSynthDcp="false" SynthRun="custom_logic_pr_block_synth_1" IncludeInArchive="false" GenFullBitstream="true">
       <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2018"/>
+        <StratHandle Name="Vivado Implementation Defaults" Flow="Vivado Implementation 2018">
+          <Desc>Default settings for Implementation.</Desc>
+        </StratHandle>
         <Step Id="init_design"/>
         <Step Id="opt_design"/>
         <Step Id="power_opt_design"/>
@@ -522,4 +506,12 @@
   <Board>
     <Jumpers/>
   </Board>
+  <PRFlow Version="1" Minor="0">
+    <PartitionDefs>
+      <PartitionDef Name="C1" DefaultRM="custom_logic_pr_block" ModuleName="custom_logic_pr_block" LibraryName="xil_defaultlib">
+        <ReconfigModule Name="custom_logic_pr_block" Top="custom_logic_pr_block" SrcSet="custom_logic_pr_block" SynthRun="custom_logic_pr_block_synth_1" ImplRun="custom_logic_pr_block_impl_1"/>
+      </PartitionDef>
+    </PartitionDefs>
+    <PRConfigurations/>
+  </PRFlow>
 </Project>

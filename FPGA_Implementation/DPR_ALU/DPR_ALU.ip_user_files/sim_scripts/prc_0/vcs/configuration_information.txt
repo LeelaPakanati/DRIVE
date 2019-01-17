@@ -1,0 +1,157 @@
+Core Configuration Properties
+=============================
+CONFIG.HAS_AXI_LITE_IF                        0
+CONFIG.RESET_ACTIVE_LEVEL                     1
+CONFIG.CP_FIFO_DEPTH                          32
+CONFIG.CP_FIFO_TYPE                           lutram
+CONFIG.CP_ARBITRATION_PROTOCOL                0
+CONFIG.CP_COMPRESSION                         0
+CONFIG.CP_FAMILY                              7series
+CONFIG.CDC_STAGES                             2
+CONFIG.VS.vs_alu.START_IN_SHUTDOWN            0
+CONFIG.VS.vs_alu.NUM_TRIGGERS_ALLOCATED       4
+CONFIG.VS.vs_alu.NUM_RMS_ALLOCATED            4
+CONFIG.VS.vs_alu.NUM_HW_TRIGGERS              4
+CONFIG.VS.vs_alu.SHUTDOWN_ON_ERROR            1
+CONFIG.VS.vs_alu.HAS_AXIS_STATUS              1
+CONFIG.VS.vs_alu.HAS_AXIS_CONTROL             0
+CONFIG.VS.vs_alu.HAS_POR_RM                   1
+CONFIG.VS.vs_alu.POR_RM                       rm_add
+CONFIG.VS.vs_alu.SKIP_RM_STARTUP_AFTER_RESET  0
+CONFIG.VS.vs_alu.TRIGGER0_TO_RM               rm_add
+CONFIG.VS.vs_alu.TRIGGER1_TO_RM               rm_sub
+CONFIG.VS.vs_alu.TRIGGER2_TO_RM               rm_srl
+CONFIG.VS.vs_alu.TRIGGER3_TO_RM               rm_sll
+CONFIG.VS.vs_alu.RM.rm_add.SHUTDOWN_REQUIRED  no
+CONFIG.VS.vs_alu.RM.rm_add.STARTUP_REQUIRED   no
+CONFIG.VS.vs_alu.RM.rm_add.RESET_REQUIRED     high
+CONFIG.VS.vs_alu.RM.rm_add.RESET_DURATION     1
+CONFIG.VS.vs_alu.RM.rm_add.BS.0.ADDRESS       0
+CONFIG.VS.vs_alu.RM.rm_add.BS.0.SIZE          0
+CONFIG.VS.vs_alu.RM.rm_add.BS.0.CLEAR         0
+CONFIG.VS.vs_alu.RM.rm_sub.SHUTDOWN_REQUIRED  no
+CONFIG.VS.vs_alu.RM.rm_sub.STARTUP_REQUIRED   no
+CONFIG.VS.vs_alu.RM.rm_sub.RESET_REQUIRED     high
+CONFIG.VS.vs_alu.RM.rm_sub.RESET_DURATION     1
+CONFIG.VS.vs_alu.RM.rm_sub.BS.0.ADDRESS       0
+CONFIG.VS.vs_alu.RM.rm_sub.BS.0.SIZE          0
+CONFIG.VS.vs_alu.RM.rm_sub.BS.0.CLEAR         0
+CONFIG.VS.vs_alu.RM.rm_srl.SHUTDOWN_REQUIRED  no
+CONFIG.VS.vs_alu.RM.rm_srl.STARTUP_REQUIRED   no
+CONFIG.VS.vs_alu.RM.rm_srl.RESET_REQUIRED     high
+CONFIG.VS.vs_alu.RM.rm_srl.RESET_DURATION     1
+CONFIG.VS.vs_alu.RM.rm_srl.BS.0.ADDRESS       0
+CONFIG.VS.vs_alu.RM.rm_srl.BS.0.SIZE          0
+CONFIG.VS.vs_alu.RM.rm_srl.BS.0.CLEAR         0
+CONFIG.VS.vs_alu.RM.rm_sll.SHUTDOWN_REQUIRED  no
+CONFIG.VS.vs_alu.RM.rm_sll.STARTUP_REQUIRED   no
+CONFIG.VS.vs_alu.RM.rm_sll.RESET_REQUIRED     high
+CONFIG.VS.vs_alu.RM.rm_sll.RESET_DURATION     1
+CONFIG.VS.vs_alu.RM.rm_sll.BS.0.ADDRESS       0
+CONFIG.VS.vs_alu.RM.rm_sll.BS.0.SIZE          0
+CONFIG.VS.vs_alu.RM.rm_sll.BS.0.CLEAR         0
+
+
+prc_v1_3::set_property -dict [list \
+                               CONFIG.HAS_AXI_LITE_IF                        0 \
+                               CONFIG.RESET_ACTIVE_LEVEL                     1 \
+                               CONFIG.CP_FIFO_DEPTH                          32 \
+                               CONFIG.CP_FIFO_TYPE                           lutram \
+                               CONFIG.CP_ARBITRATION_PROTOCOL                0 \
+                               CONFIG.CP_COMPRESSION                         0 \
+                               CONFIG.CP_FAMILY                              7series \
+                               CONFIG.CDC_STAGES                             2 \
+                               CONFIG.VS.vs_alu.START_IN_SHUTDOWN            0 \
+                               CONFIG.VS.vs_alu.NUM_TRIGGERS_ALLOCATED       4 \
+                               CONFIG.VS.vs_alu.NUM_RMS_ALLOCATED            4 \
+                               CONFIG.VS.vs_alu.NUM_HW_TRIGGERS              4 \
+                               CONFIG.VS.vs_alu.SHUTDOWN_ON_ERROR            1 \
+                               CONFIG.VS.vs_alu.HAS_AXIS_STATUS              1 \
+                               CONFIG.VS.vs_alu.HAS_AXIS_CONTROL             0 \
+                               CONFIG.VS.vs_alu.HAS_POR_RM                   1 \
+                               CONFIG.VS.vs_alu.POR_RM                       rm_add \
+                               CONFIG.VS.vs_alu.SKIP_RM_STARTUP_AFTER_RESET  0 \
+                               CONFIG.VS.vs_alu.TRIGGER0_TO_RM               rm_add \
+                               CONFIG.VS.vs_alu.TRIGGER1_TO_RM               rm_sub \
+                               CONFIG.VS.vs_alu.TRIGGER2_TO_RM               rm_srl \
+                               CONFIG.VS.vs_alu.TRIGGER3_TO_RM               rm_sll \
+                               CONFIG.VS.vs_alu.RM.rm_add.SHUTDOWN_REQUIRED  no \
+                               CONFIG.VS.vs_alu.RM.rm_add.STARTUP_REQUIRED   no \
+                               CONFIG.VS.vs_alu.RM.rm_add.RESET_REQUIRED     high \
+                               CONFIG.VS.vs_alu.RM.rm_add.RESET_DURATION     1 \
+                               CONFIG.VS.vs_alu.RM.rm_add.BS.0.ADDRESS       0 \
+                               CONFIG.VS.vs_alu.RM.rm_add.BS.0.SIZE          0 \
+                               CONFIG.VS.vs_alu.RM.rm_add.BS.0.CLEAR         0 \
+                               CONFIG.VS.vs_alu.RM.rm_sub.SHUTDOWN_REQUIRED  no \
+                               CONFIG.VS.vs_alu.RM.rm_sub.STARTUP_REQUIRED   no \
+                               CONFIG.VS.vs_alu.RM.rm_sub.RESET_REQUIRED     high \
+                               CONFIG.VS.vs_alu.RM.rm_sub.RESET_DURATION     1 \
+                               CONFIG.VS.vs_alu.RM.rm_sub.BS.0.ADDRESS       0 \
+                               CONFIG.VS.vs_alu.RM.rm_sub.BS.0.SIZE          0 \
+                               CONFIG.VS.vs_alu.RM.rm_sub.BS.0.CLEAR         0 \
+                               CONFIG.VS.vs_alu.RM.rm_srl.SHUTDOWN_REQUIRED  no \
+                               CONFIG.VS.vs_alu.RM.rm_srl.STARTUP_REQUIRED   no \
+                               CONFIG.VS.vs_alu.RM.rm_srl.RESET_REQUIRED     high \
+                               CONFIG.VS.vs_alu.RM.rm_srl.RESET_DURATION     1 \
+                               CONFIG.VS.vs_alu.RM.rm_srl.BS.0.ADDRESS       0 \
+                               CONFIG.VS.vs_alu.RM.rm_srl.BS.0.SIZE          0 \
+                               CONFIG.VS.vs_alu.RM.rm_srl.BS.0.CLEAR         0 \
+                               CONFIG.VS.vs_alu.RM.rm_sll.SHUTDOWN_REQUIRED  no \
+                               CONFIG.VS.vs_alu.RM.rm_sll.STARTUP_REQUIRED   no \
+                               CONFIG.VS.vs_alu.RM.rm_sll.RESET_REQUIRED     high \
+                               CONFIG.VS.vs_alu.RM.rm_sll.RESET_DURATION     1 \
+                               CONFIG.VS.vs_alu.RM.rm_sll.BS.0.ADDRESS       0 \
+                               CONFIG.VS.vs_alu.RM.rm_sll.BS.0.SIZE          0 \
+                               CONFIG.VS.vs_alu.RM.rm_sll.BS.0.CLEAR         0 \
+                             ] [get_ips prc_0]
+
+ID Mapping
+=============================
+Virtual Socket Manager vs_alu is assigned ID 0
+  Reconfigurable Module rm_add is assigned ID 0
+  Reconfigurable Module rm_sub is assigned ID 1
+  Reconfigurable Module rm_srl is assigned ID 2
+  Reconfigurable Module rm_sll is assigned ID 3
+
+
+Address Structure
+=============================
+The addresses are structured as follows:
+  There is no VSM Select slice as there's only one VSM
+  address[ 7: 6]  : Selects the Register Bank
+  address[ 5: 2]  : Selects the Register within the bank
+
+Address Map
+=============================
+| Virtual Socket Manager | Register     | Address |
++------------------------+--------------+---------+
+| vs_alu                 | STATUS       | 0X00000 |
+| vs_alu                 | CONTROL      | 0X00000 |
+| vs_alu                 | SW_TRIGGER   | 0X00004 |
+| vs_alu                 | TRIGGER0     | 0X00040 |
+| vs_alu                 | TRIGGER1     | 0X00044 |
+| vs_alu                 | TRIGGER2     | 0X00048 |
+| vs_alu                 | TRIGGER3     | 0X0004C |
+| vs_alu                 | RM_BS_INDEX0 | 0X00080 |
+| vs_alu                 | RM_CONTROL0  | 0X00084 |
+| vs_alu                 | RM_BS_INDEX1 | 0X00088 |
+| vs_alu                 | RM_CONTROL1  | 0X0008C |
+| vs_alu                 | RM_BS_INDEX2 | 0X00090 |
+| vs_alu                 | RM_CONTROL2  | 0X00094 |
+| vs_alu                 | RM_BS_INDEX3 | 0X00098 |
+| vs_alu                 | RM_CONTROL3  | 0X0009C |
+| vs_alu                 | BS_ID0       | 0X000C0 |
+| vs_alu                 | BS_ADDRESS0  | 0X000C4 |
+| vs_alu                 | BS_SIZE0     | 0X000C8 |
+| vs_alu                 | BS_ID1       | 0X000D0 |
+| vs_alu                 | BS_ADDRESS1  | 0X000D4 |
+| vs_alu                 | BS_SIZE1     | 0X000D8 |
+| vs_alu                 | BS_ID2       | 0X000E0 |
+| vs_alu                 | BS_ADDRESS2  | 0X000E4 |
+| vs_alu                 | BS_SIZE2     | 0X000E8 |
+| vs_alu                 | BS_ID3       | 0X000F0 |
+| vs_alu                 | BS_ADDRESS3  | 0X000F4 |
+| vs_alu                 | BS_SIZE3     | 0X000F8 |
+
+
+
